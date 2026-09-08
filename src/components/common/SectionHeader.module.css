@@ -1,0 +1,24 @@
+.header {
+  margin-bottom: 2.5rem;
+  max-width: 780px;
+}
+
+.centered {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.title {
+  margin-top: 0.75rem;
+  margin-bottom: 0.85rem;
+  font-size: clamp(2rem, 3.2vw, 2.75rem);
+  color: var(--color-primary);
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-size: 1.05rem;
+  color: var(--color-text-muted);
+  line-height: 1.65;
+}

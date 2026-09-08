@@ -1,0 +1,225 @@
+.pageContainer {
+  min-height: calc(100vh - 160px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  background: radial-gradient(circle at 50% 20%, rgba(201, 169, 110, 0.1) 0%, transparent 60%),
+              radial-gradient(circle at 10% 90%, rgba(26, 26, 46, 0.05) 0%, transparent 50%),
+              var(--color-bg);
+}
+
+.loginCard {
+  width: 100%;
+  max-width: 480px;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 3rem 2.5rem;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+}
+
+.cardHeader {
+  text-align: center;
+  margin-bottom: 2.25rem;
+}
+
+.cardHeader h1 {
+  font-size: 1.85rem;
+  color: var(--color-primary);
+  margin-top: 0.75rem;
+  margin-bottom: 0.4rem;
+}
+
+.cardSubtitle {
+  color: var(--color-text-muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.label {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 14px;
+  color: var(--color-text-light);
+  pointer-events: none;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 16px 12px 42px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-bg);
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  outline: none;
+  transition: all var(--transition-fast);
+}
+
+.input:focus {
+  background: var(--color-white);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.2);
+}
+
+.togglePasswordBtn {
+  position: absolute;
+  right: 14px;
+  background: transparent;
+  border: none;
+  color: var(--color-text-light);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.togglePasswordBtn:hover {
+  color: var(--color-primary);
+}
+
+.submitBtn {
+  width: 100%;
+  justify-content: center;
+  padding: 13px;
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+.alertError {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #991b1b;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+}
+
+.hintText {
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+  margin-top: 0.25rem;
+}
+
+/* Authenticated Card */
+.authenticatedCard {
+  width: 100%;
+  max-width: 520px;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 3rem 2.5rem;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+
+.authBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(16, 185, 129, 0.1);
+  color: #065f46;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.profileDetails {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin: 1.5rem 0 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: left;
+}
+
+.profileRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.92rem;
+}
+
+.profileLabel {
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.profileVal {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.logoutBtn {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-primary);
+  padding: 10px 20px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.logoutBtn:hover {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 640px) {
+  .loginCard,
+  .authenticatedCard {
+    padding: 2rem 1.5rem;
+  }
+}

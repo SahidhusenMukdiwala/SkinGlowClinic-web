@@ -1,0 +1,223 @@
+.sliderContainer {
+  max-width: 1120px;
+  margin: 0 auto;
+  position: relative;
+  user-select: none;
+}
+
+.sliderControlsTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.statusIndicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  background: var(--color-white);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: var(--shadow-sm);
+}
+
+.livePulse {
+  width: 7px;
+  height: 7px;
+  background: var(--color-accent);
+  border-radius: 50%;
+  animation: pulseGlow 2s infinite;
+}
+
+.pausedPulse {
+  background: var(--color-text-muted);
+  animation: none;
+}
+
+@keyframes pulseGlow {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(201, 169, 110, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px rgba(201, 169, 110, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(201, 169, 110, 0);
+  }
+}
+
+.navButtons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.navButton {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-white);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.navButton:hover {
+  background: var(--color-primary);
+  color: var(--color-accent);
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.sliderViewport {
+  overflow: hidden;
+  margin: 0 -1rem;
+  padding: 0.5rem 0 1rem;
+}
+
+.sliderTrack {
+  display: flex;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.slideItem {
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+.card {
+  background: var(--color-white);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: 2.25rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-normal);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-accent);
+}
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.stars {
+  display: flex;
+  gap: 4px;
+}
+
+.quoteIcon {
+  color: var(--color-accent-soft);
+  opacity: 0.7;
+}
+
+.quoteText {
+  color: var(--color-text);
+  font-size: 1.02rem;
+  line-height: 1.7;
+  margin-bottom: 1.75rem;
+  font-style: italic;
+  flex: 1;
+}
+
+.patientInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+  border: 2px solid var(--color-accent-soft);
+}
+
+.patientName {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 3px;
+}
+
+.verifiedBadge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.dotsContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 1.75rem;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-border);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all var(--transition-fast);
+}
+
+.dot:hover {
+  background: var(--color-accent-soft);
+}
+
+.activeDot {
+  width: 28px;
+  background: var(--color-accent);
+}
+
+@media (max-width: 768px) {
+  .sliderViewport {
+    margin: 0 -0.5rem;
+  }
+
+  .slideItem {
+    padding: 0 0.5rem;
+  }
+
+  .card {
+    padding: 1.75rem 1.25rem;
+  }
+
+  .sliderControlsTop {
+    margin-bottom: 1rem;
+  }
+}
