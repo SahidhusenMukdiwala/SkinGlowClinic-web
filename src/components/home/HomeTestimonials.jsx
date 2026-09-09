@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import { Star, CheckCircle2, Quote, ChevronLeft, ChevronRight } from 'lucide-react';
-import styles from './HomeTestimonials.module.css';
 
 export default function HomeTestimonials({ testimonials = [] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -29,7 +28,6 @@ export default function HomeTestimonials({ testimonials = [] }) {
   const total = testimonials.length;
   const maxIndex = Math.max(0, total - visibleCards);
 
-  // Ensure currentIndex stays within bounds if visibleCards changes
   useEffect(() => {
     if (currentIndex > maxIndex) {
       setCurrentIndex(maxIndex);
@@ -55,7 +53,6 @@ export default function HomeTestimonials({ testimonials = [] }) {
     return () => clearInterval(timer);
   }, [isPaused, total, visibleCards, nextSlide]);
 
-  // Touch handlers for mobile swipe
   const handleTouchStart = (e) => {
     touchStartX.current = e.targetTouches[0].clientX;
   };
@@ -77,7 +74,7 @@ export default function HomeTestimonials({ testimonials = [] }) {
 
   return (
     <div
-      className={styles.sliderContainer}
+      className="relative max-w-5xl mx-auto"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
@@ -86,32 +83,32 @@ export default function HomeTestimonials({ testimonials = [] }) {
       aria-roledescription="carousel"
       aria-label="Patient Testimonials Slider"
     >
-      <div className={styles.sliderControlsTop}>
-        <div className={styles.statusIndicator}>
-          <span className={`${styles.livePulse} ${isPaused ? styles.pausedPulse : ''}`} />
+      <div className="flex items-center justify-between mb-6 px-2">
+        <div className="inline-flex items-center gap-2 text-xs font-medium text-clinic-muted">
+          <span className={`w-2 h-2 rounded-full ${isPaused ? 'bg-amber-500' : 'bg-emerald-500 animate-pulse'}`} />
           <span>{isPaused ? 'Paused on Hover' : 'Auto-Sliding Reviews'}</span>
         </div>
-        <div className={styles.navButtons}>
+        <div className="flex items-center gap-2">
           <button
             onClick={prevSlide}
-            className={styles.navButton}
+            className="w-9 h-9 rounded-full bg-white border border-clinic-border-subtle hover:border-accent flex items-center justify-center text-primary hover:text-accent shadow-sm transition-all"
             aria-label="Previous review"
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft size={18} />
           </button>
           <button
             onClick={nextSlide}
-            className={styles.navButton}
+            className="w-9 h-9 rounded-full bg-white border border-clinic-border-subtle hover:border-accent flex items-center justify-center text-primary hover:text-accent shadow-sm transition-all"
             aria-label="Next review"
           >
-            <ChevronRight size={20} />
+            <ChevronRight size={18} />
           </button>
         </div>
       </div>
 
-      <div className={styles.sliderViewport}>
+      <div className="overflow-hidden py-2">
         <div
-          className={styles.sliderTrack}
+          className="flex transition-transform duration-500 ease-out"
           style={{
             transform: `translateX(-${currentIndex * (100 / visibleCards)}%)`,
           }}
@@ -119,35 +116,35 @@ export default function HomeTestimonials({ testimonials = [] }) {
           {testimonials.map((item) => (
             <div
               key={item.id}
-              className={styles.slideItem}
+              className="px-3 shrink-0"
               style={{ flex: `0 0 ${100 / visibleCards}%` }}
             >
-              <article className={styles.card}>
-                <div className={styles.cardTop}>
-                  <div className={styles.stars}>
+              <article className="bg-white p-7 rounded-2xl border border-clinic-border-subtle hover:border-accent/40 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between h-full">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-1">
                     {[...Array(item.rating || 5)].map((_, i) => (
-                      <Star key={i} size={16} fill="#C9A96E" color="#C9A96E" />
+                      <Star key={i} size={15} fill="#C9A96E" color="#C9A96E" />
                     ))}
                   </div>
-                  <Quote size={28} className={styles.quoteIcon} />
+                  <Quote size={24} className="text-accent/40" />
                 </div>
 
-                <p className={styles.quoteText}>
+                <p className="text-clinic-text text-sm sm:text-base leading-relaxed italic mb-6">
                   &ldquo;{item.review_text}&rdquo;
                 </p>
 
-                <div className={styles.patientInfo}>
+                <div className="flex items-center gap-3.5 pt-4 border-t border-clinic-border-subtle mt-auto">
                   <Image
                     src={item.patient_image || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80'}
                     alt={item.patient_name}
-                    width={52}
-                    height={52}
-                    className={styles.avatar}
+                    width={48}
+                    height={48}
+                    className="w-12 h-12 rounded-full object-cover border-2 border-accent/30"
                   />
                   <div>
-                    <h4 className={styles.patientName}>{item.patient_name}</h4>
-                    <div className={styles.verifiedBadge}>
-                      <CheckCircle2 size={13} color="#10B981" />
+                    <h4 className="font-heading font-bold text-primary text-base">{item.patient_name}</h4>
+                    <div className="inline-flex items-center gap-1 text-xs text-emerald-600 font-medium">
+                      <CheckCircle2 size={12} />
                       <span>Verified Patient</span>
                     </div>
                   </div>
@@ -159,11 +156,13 @@ export default function HomeTestimonials({ testimonials = [] }) {
       </div>
 
       {/* Pagination dots */}
-      <div className={styles.dotsContainer}>
+      <div className="flex items-center justify-center gap-2 mt-8">
         {Array.from({ length: maxIndex + 1 }).map((_, index) => (
           <button
             key={index}
-            className={`${styles.dot} ${currentIndex === index ? styles.activeDot : ''}`}
+            className={`h-2.5 rounded-full transition-all duration-300 ${
+              currentIndex === index ? 'w-6 bg-accent' : 'w-2.5 bg-gray-300 hover:bg-accent/60'
+            }`}
             onClick={() => setCurrentIndex(index)}
             aria-label={`Go to review slide ${index + 1}`}
           />

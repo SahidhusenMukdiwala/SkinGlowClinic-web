@@ -3,50 +3,49 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Clock, ArrowRight, Sparkles } from 'lucide-react';
 import { CATEGORY_MAP } from '@/lib/constants';
-import styles from './TreatmentCard.module.css';
 
 export default function TreatmentCard({ treatment }) {
   const categoryName = CATEGORY_MAP[treatment.category] || 'Clinical Aesthetic';
 
   return (
-    <article className={styles.card}>
-      <div className={styles.imageContainer}>
+    <article className="bg-white rounded-xl overflow-hidden border border-clinic-border-subtle hover:border-accent/40 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group">
+      <div className="relative w-full h-52 overflow-hidden bg-clinic-bg-alt">
         <Image
           src={treatment.image_url || 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=1000&q=80'}
           alt={treatment.title}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className={styles.image}
+          className="object-cover group-hover:scale-105 transition-transform duration-500"
         />
-        <div className={styles.categoryBadge}>
-          <Sparkles size={12} />
+        <div className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-primary/85 backdrop-blur-sm text-accent text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+          <Sparkles size={11} />
           <span>{categoryName}</span>
         </div>
         {treatment.duration && (
-          <div className={styles.durationBadge}>
-            <Clock size={12} />
+          <div className="absolute bottom-3 right-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-primary text-xs font-medium flex items-center gap-1 shadow-sm">
+            <Clock size={11} />
             <span>{treatment.duration}</span>
           </div>
         )}
       </div>
 
-      <div className={styles.content}>
-        <h3 className={styles.title}>
+      <div className="p-5 flex flex-col flex-1">
+        <h3 className="font-heading text-lg font-bold text-primary hover:text-accent transition-colors mb-2 line-clamp-1">
           <Link href={`/treatments/${treatment.slug}`}>
             {treatment.title}
           </Link>
         </h3>
 
-        <p className={styles.description}>
+        <p className="text-sm text-clinic-muted leading-relaxed mb-4 line-clamp-2 flex-1">
           {treatment.short_description}
         </p>
 
-        <div className={styles.footer}>
-          <Link href={`/treatments/${treatment.slug}`} className={styles.link}>
+        <div className="flex items-center justify-between pt-3 border-t border-clinic-border-subtle mt-auto">
+          <Link href={`/treatments/${treatment.slug}`} className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:text-accent transition-colors">
             <span>View Clinical Profile</span>
-            <ArrowRight size={15} />
+            <ArrowRight size={14} />
           </Link>
-          <Link href={`/book-appointment?treatment=${treatment.slug}`} className={styles.bookBtn}>
+          <Link href={`/book-appointment?treatment=${treatment.slug}`} className="px-3.5 py-1.5 rounded-full bg-accent/15 hover:bg-accent text-primary text-xs font-semibold transition-all">
             Book
           </Link>
         </div>

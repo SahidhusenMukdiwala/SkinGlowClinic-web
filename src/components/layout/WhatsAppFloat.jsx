@@ -1,22 +1,23 @@
 import React from 'react';
-import styles from './WhatsAppFloat.module.css';
 
 export default function WhatsAppFloat() {
-  const whatsappNumber = '919876543210';
+  const whatsappNumber = '919820123456';
   const defaultMessage = encodeURIComponent('Hello SkinGlow Clinic, I would like to inquire about your treatments.');
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${defaultMessage}`;
 
   return (
-    <div className={styles.whatsappWrapper}>
-      <span className={styles.tooltip}>Chat with Clinic</span>
+    <div className="fixed bottom-6 right-6 z-40 flex items-center group">
+      <span className="hidden sm:block mr-3 px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-medium shadow-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+        Chat with Clinic
+      </span>
       <a
         href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className={styles.whatsappBtn}
+        className="relative w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
         aria-label="Chat with SkinGlow Clinic on WhatsApp"
       >
-        <span className={styles.pulseRing}></span>
+        <span className="absolute inset-0 rounded-full bg-[#25D366] opacity-60 animate-ping -z-10"></span>
         <svg
           width="28"
           height="28"

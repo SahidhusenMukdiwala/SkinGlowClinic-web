@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-import styles from './HomeFAQ.module.css';
 
 const FAQ_ITEMS = [
   {
@@ -35,29 +34,31 @@ export default function HomeFAQ() {
   };
 
   return (
-    <div className={styles.faqList}>
+    <div className="flex flex-col gap-4 max-w-3xl mx-auto">
       {FAQ_ITEMS.map((item, index) => {
         const isOpen = openIndex === index;
         return (
           <div
             key={index}
-            className={`${styles.faqItem} ${isOpen ? styles.open : ''}`}
+            className={`bg-white rounded-xl border transition-all duration-200 overflow-hidden ${
+              isOpen ? 'border-accent/50 shadow-sm' : 'border-clinic-border-subtle hover:border-accent/30'
+            }`}
           >
             <button
               type="button"
-              className={styles.questionBtn}
+              className="w-full px-6 py-5 text-left flex items-center justify-between gap-4 font-heading font-semibold text-primary text-base sm:text-lg hover:text-accent transition-colors"
               onClick={() => toggleFAQ(index)}
               aria-expanded={isOpen}
             >
-              <span className={styles.questionText}>{item.question}</span>
-              <span className={styles.iconWrapper}>
-                <ChevronDown size={20} className={styles.chevron} />
-              </span>
+              <span>{item.question}</span>
+              <div className={`w-7 h-7 rounded-full bg-clinic-bg flex items-center justify-center text-clinic-muted shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180 text-accent bg-accent/15' : ''}`}>
+                <ChevronDown size={18} />
+              </div>
             </button>
 
             {isOpen && (
-              <div className={styles.answerWrapper}>
-                <p className={styles.answerText}>{item.answer}</p>
+              <div className="px-6 pb-5 pt-1 text-sm sm:text-base text-clinic-muted leading-relaxed border-t border-clinic-border-subtle/50 animate-fadeIn">
+                <p>{item.answer}</p>
               </div>
             )}
           </div>

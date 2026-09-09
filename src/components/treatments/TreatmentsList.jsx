@@ -4,7 +4,6 @@ import React, { useState, useMemo } from 'react';
 import { Search } from 'lucide-react';
 import { TREATMENT_CATEGORIES } from '@/lib/constants';
 import TreatmentCard from './TreatmentCard';
-import styles from '@/app/treatments/treatments.module.css';
 
 export default function TreatmentsList({ initialTreatments = [] }) {
   const [activeCategory, setActiveCategory] = useState(0);
@@ -22,48 +21,55 @@ export default function TreatmentsList({ initialTreatments = [] }) {
   }, [initialTreatments, activeCategory, searchQuery]);
 
   return (
-    <>
-      <div className={styles.filterBar}>
+    <div>
+      <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
         {/* Search input */}
-        <div className={styles.searchBox}>
-          <Search size={18} className={styles.searchIcon} />
+        <div className="relative w-full md:w-80 shrink-0">
+          <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-clinic-muted" />
           <input
             type="text"
-            placeholder="Search treatments by keyword (e.g. Laser, Peel, Botox)..."
+            placeholder="Search treatments (Laser, Peel, Hydra)..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className={styles.searchInput}
+            className="w-full pl-10 pr-4 py-2.5 rounded-full bg-white border border-clinic-border-subtle focus:border-accent focus:outline-none text-sm text-clinic-text shadow-sm"
           />
         </div>
 
         {/* Category Filter Pills */}
-        <div className={styles.tabsContainer}>
-          {TREATMENT_CATEGORIES.map(cat => (
-            <button
-              key={cat.id}
-              type="button"
-              className={`${styles.tabBtn} ${activeCategory === cat.id ? styles.active : ''}`}
-              onClick={() => setActiveCategory(cat.id)}
-            >
-              {cat.name}
-            </button>
-          ))}
+        <div className="flex items-center flex-wrap gap-2 justify-center md:justify-end w-full">
+          {TREATMENT_CATEGORIES.map(cat => {
+            const isActive = activeCategory === cat.id;
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all ${
+                  isActive
+                    ? 'bg-primary text-accent shadow-sm'
+                    : 'bg-white border border-clinic-border-subtle text-clinic-text hover:bg-clinic-bg-alt'
+                }`}
+                onClick={() => setActiveCategory(cat.id)}
+              >
+                {cat.name}
+              </button>
+            );
+          })}
         </div>
       </div>
 
       {/* Grid */}
-      <div className={styles.grid}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredTreatments.length > 0 ? (
           filteredTreatments.map(treatment => (
             <TreatmentCard key={treatment.id || treatment.slug} treatment={treatment} />
           ))
         ) : (
-          <div className={styles.emptyState}>
-            <h3>No matching treatments found</h3>
-            <p>Try refining your search keyword or clearing the category filter.</p>
+          <div className="col-span-full py-16 text-center text-clinic-muted bg-white rounded-2xl border border-clinic-border-subtle">
+            <h3 className="font-heading text-lg font-bold text-primary mb-1">No matching treatments found</h3>
+            <p className="text-sm">Try refining your search keyword or clearing the category filter.</p>
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }

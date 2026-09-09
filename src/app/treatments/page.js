@@ -2,7 +2,6 @@ import React from 'react';
 import { Sparkles } from 'lucide-react';
 import { fetchTreatments } from '@/lib/api';
 import TreatmentsList from '@/components/treatments/TreatmentsList';
-import styles from './treatments.module.css';
 
 export const metadata = {
   title: 'Specialized Treatments | SkinGlow Clinic Mumbai',
@@ -15,27 +14,27 @@ export default async function TreatmentsPage() {
   const treatments = await fetchTreatments();
 
   return (
-    <div className={styles.treatmentsPage}>
+    <div className="min-h-screen bg-clinic-bg pb-20">
       {/* Header Banner */}
-      <div className={styles.pageHeader}>
+      <header className="py-16 text-center bg-gradient-to-b from-primary/5 via-clinic-bg to-clinic-bg border-b border-clinic-border-subtle mb-12">
         <div className="container">
-          <div className="badge" style={{ margin: '0 auto' }}>
+          <div className="badge mx-auto mb-3">
             <Sparkles size={14} />
             <span>Physician-Led Services</span>
           </div>
-          <h1 className={styles.pageTitle}>Clinical Treatments & Procedures</h1>
-          <p className={styles.pageSubtitle}>
+          <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-primary font-bold mb-4">
+            Clinical Treatments & Procedures
+          </h1>
+          <p className="text-sm sm:text-base text-clinic-muted max-w-2xl mx-auto leading-relaxed">
             Every treatment at SkinGlow Clinic is backed by dermatological science, cutting-edge medical technology, and personalized clinical care.
           </p>
         </div>
-      </div>
+      </header>
 
       {/* Main Listing Section */}
-      <section className={styles.treatmentsSection}>
-        <div className="container">
-          <TreatmentsList initialTreatments={treatments} />
-        </div>
-      </section>
+      <main className="container">
+        <TreatmentsList initialTreatments={treatments} />
+      </main>
     </div>
   );
 }

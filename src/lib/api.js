@@ -1,6 +1,5 @@
+import axiosServices from './axios';
 import { CLINIC_DEFAULTS } from './constants';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
 const FALLBACK_TREATMENTS = [
   {
@@ -49,34 +48,34 @@ const FALLBACK_TREATMENTS = [
     slug: 'laser-hair-reduction',
     category: 3,
     duration: '30-60 mins',
-    image_url: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=1000&q=80',
-    short_description: 'Gold-standard diode laser with ice-cooling technology for permanent, virtually pain-free hair reduction across all skin types.',
-    full_description: 'Experience the pinnacle of clinical laser hair removal. Our state-of-the-art triple-wavelength laser platform seamlessly merges 755nm Alexandrite, 808nm Diode, and 1064nm Nd:YAG energy to target hair follicles at varying structural depths.\n\n### Why SkinGlow Laser Is Superior\n- **Integrated Ice-Cooling Contact Tip**: Keeps the epidermal surface at a soothing 4°C, preventing thermal discomfort.\n- **Safe for Fitzpatrick Types I to VI**: Optimized pulse parameters ensure safety on deeper Indian skin tones without risk of burns or hyperpigmentation.\n- **Rapid Treatment Speed**: High-frequency in-motion delivery enables full legs or back coverage in under 40 minutes.',
+    image_url: 'https://images.unsplash.com/photo-1560750588-73207b1ef5b8?auto=format&fit=crop&w=1000&q=80',
+    short_description: 'Pain-free gold standard permanent hair reduction combining Alexandrite (755nm), Diode (808nm), and Nd:YAG (1064nm) lasers.',
+    full_description: 'Say goodbye to razor bumps, ingrown hairs, and endless waxing sessions. Our medical-grade Triple-Wavelength diode platform simultaneously targets all three structural depths of the hair follicle.\n\nIntegrated with -5°C sapphire crystal contact cooling, sessions are virtually painless and safe across all Indian Fitzpatrick skin types (III–VI).',
   },
   {
-    title: 'Carbon Spectra Laser Toning (Hollywood Peel)',
     id: 6,
-    slug: 'carbon-spectra-toning',
+    title: 'Q-Switched Nd:YAG Laser Toning & Carbon Peel',
+    slug: 'q-switched-laser-toning',
     category: 3,
     duration: '45 mins',
-    image_url: 'https://images.unsplash.com/photo-1560750588-73207b1ef5b8?auto=format&fit=crop&w=1000&q=80',
-    short_description: 'Q-Switched Nd:YAG laser combined with liquid carbon lotion for intense pore tightening, oil control, and instant luminosity.',
-    full_description: 'Celebrated as the Hollywood Laser Peel, this procedure begins with an application of medical-grade nano-carbon lotion that binds deeply to oil and debris within pores.\n\nWhen the Q-switched laser pulses over the skin, the carbon particles instantly vaporize, carrying away dead skin cells, shrinking enlarged pores, stimulating collagen remodeling, and evening out skin pigmentation. Zero downtime with instant red-carpet radiance.',
+    image_url: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=1000&q=80',
+    short_description: 'Acoustic photo-mechanical laser pulses to shatter stubborn dermal pigmentation, melasma, and shrink enlarged pores.',
+    full_description: 'Q-Switched Nd:YAG laser emission delivers ultra-short nanosecond energy pulses that photomechanically fragment melanin clusters into microscopic particles, which are then naturally eliminated by your body’s immune phagocytes.\n\nCombined with a liquid medical carbon mask (Hollywood Carbon Peel), it purges oxidized sebum, refines skin pores, and imparts instant photographic clarity.',
   },
   {
     id: 7,
-    title: 'Botox & Dysport Dynamic Wrinkle Smoothing',
-    slug: 'botox-wrinkle-smoothing',
+    title: 'Botox Anti-Wrinkle Smoothing',
+    slug: 'botox-anti-wrinkle-smoothing',
     category: 4,
     duration: '30 mins',
-    image_url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1000&q=80',
-    short_description: 'Precision neuromodulator injections to soften forehead lines, crow’s feet, and frown lines while maintaining natural expression.',
-    full_description: 'Administered exclusively by certified dermatologists, our neuromodulator therapies subtly relax targeted hyperactive facial muscles that create stubborn expression lines.\n\n### Key Treatment Areas\n- **Horizontal Forehead Lines**: Smoothing worry creases for a serene, youthful upper face.\n- **Glabellar Frown Lines (11s)**: Softening deep furrow lines between the brows.\n- **Crow’s Feet**: Rejuvenating the delicate lateral eye contours.\n- **Masseter Reduction**: Slimming the jawline and relieving nocturnal teeth grinding (bruxism).\n\nResults emerge within 4 to 7 days, maintaining a refreshed, expressive appearance for 4 to 6 months.',
+    image_url: 'https://images.unsplash.com/photo-1526045612212-70caf35c14df?auto=format&fit=crop&w=1000&q=80',
+    short_description: 'Precision neurotoxin micro-dosing to soften dynamic forehead lines, crow’s feet, and frown furrows while preserving natural expression.',
+    full_description: 'Administered exclusively by Dr. Aisha Sharma MD, our micro-dosing protocol utilizes genuine FDA-approved onabotulinumtoxinA to gently relax hyperactive facial mimetic muscles.\n\nOur philosophy emphasizes soft, subtle rejuvenation: you will look rested, refreshed, and youthful — never frozen or unnatural. Visible smoothing appears within 4 to 7 days and endures for 4 to 6 months.',
   },
   {
     id: 8,
-    title: 'Hyaluronic Dermal Fillers & Facial Sculpting',
-    slug: 'dermal-fillers-sculpting',
+    title: 'Dermal Volumizing Fillers',
+    slug: 'dermal-volumizing-fillers',
     category: 4,
     duration: '45-60 mins',
     image_url: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=1000&q=80',
@@ -126,12 +125,12 @@ const FALLBACK_TESTIMONIALS = [
   },
 ];
 
+// ==============================|| PUBLIC APIS ||============================== //
+
 export async function fetchSettings() {
   try {
-    const res = await fetch(`${API_BASE}/settings`, { next: { revalidate: 60 } });
-    if (!res.ok) throw new Error('Failed to fetch settings');
-    const json = await res.json();
-    return { ...CLINIC_DEFAULTS, ...(json.data?.map || {}) };
+    const res = await axiosServices.get('settings');
+    return { ...CLINIC_DEFAULTS, ...(res.data?.data?.map || {}) };
   } catch {
     return CLINIC_DEFAULTS;
   }
@@ -139,87 +138,203 @@ export async function fetchSettings() {
 
 export async function fetchTreatments(category) {
   try {
-    const url = category ? `${API_BASE}/treatments?category=${category}` : `${API_BASE}/treatments`;
-    const res = await fetch(url, { next: { revalidate: 60 } });
-    if (!res.ok) throw new Error('Failed to fetch treatments');
-    const json = await res.json();
-    return json.data || FALLBACK_TREATMENTS;
+    const url = category && category !== 'all' ? `treatments?category=${category}` : 'treatments';
+    const res = await axiosServices.get(url);
+    return res.data?.data || FALLBACK_TREATMENTS;
   } catch {
-    if (category) {
-      const parsed = parseInt(category, 10);
-      return FALLBACK_TREATMENTS.filter(t => t.category === parsed);
-    }
     return FALLBACK_TREATMENTS;
   }
 }
 
 export async function fetchTreatmentBySlug(slug) {
   try {
-    const res = await fetch(`${API_BASE}/treatments/${slug}`, { next: { revalidate: 60 } });
-    if (!res.ok) throw new Error('Failed to fetch treatment detail');
-    const json = await res.json();
-    return json.data;
+    const res = await axiosServices.get(`treatments/${slug}`);
+    return res.data?.data || null;
   } catch {
-    const found = FALLBACK_TREATMENTS.find(t => t.slug === slug);
-    if (!found) return null;
-    const related = FALLBACK_TREATMENTS.filter(t => t.id !== found.id && t.category === found.category).slice(0, 3);
-    return { treatment: found, related };
+    return FALLBACK_TREATMENTS.find((t) => t.slug === slug) || null;
   }
 }
 
 export async function fetchTestimonials() {
   try {
-    const res = await fetch(`${API_BASE}/testimonials`, { next: { revalidate: 60 } });
-    if (!res.ok) throw new Error('Failed to fetch testimonials');
-    const json = await res.json();
-    return json.data || FALLBACK_TESTIMONIALS;
+    const res = await axiosServices.get('testimonials');
+    return res.data?.data || FALLBACK_TESTIMONIALS;
   } catch {
     return FALLBACK_TESTIMONIALS;
   }
 }
 
 export async function submitInquiryApi(payload) {
-  const res = await fetch(`${API_BASE}/inquiries`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(payload),
-  });
-
-  const data = await res.json();
-  if (!res.ok) {
-    throw new Error(data.message || 'Failed to submit inquiry. Please try again.');
+  try {
+    const res = await axiosServices.post('inquiries', payload);
+    return res.data;
+  } catch (err) {
+    const data = err.response?.data;
+    const msg = data?.errors?.[0]?.message || data?.message || err.message || 'Failed to submit inquiry.';
+    throw new Error(msg);
   }
-  return data;
 }
 
-export async function adminLoginApi(credentials) {
-  const res = await fetch(`${API_BASE}/auth/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(credentials),
-  });
-
-  const data = await res.json();
-  if (!res.ok) {
-    throw new Error(data.message || 'Authentication failed. Please check credentials.');
+export async function bookAppointmentApi(payload) {
+  try {
+    const res = await axiosServices.post('appointments', payload);
+    return res.data;
+  } catch (err) {
+    const data = err.response?.data;
+    if (data?.errors && Array.isArray(data.errors) && data.errors.length > 0) {
+      throw new Error(data.errors[0].message || data.message);
+    }
+    throw new Error(data?.message || err.message || 'Failed to schedule appointment. Please try again.');
   }
-  return data.data;
+}
+
+export async function fetchBookedSlotsApi(date) {
+  try {
+    const res = await axiosServices.get(`appointments/booked-slots?date=${encodeURIComponent(date)}`);
+    return res.data?.data || [];
+  } catch {
+    return [];
+  }
+}
+
+// ==============================|| AUTH & ADMIN APIS ||============================== //
+
+export async function adminLoginApi(credentials) {
+  try {
+    const res = await axiosServices.post('auth/login', credentials);
+    const data = res.data?.data;
+    if (typeof window !== 'undefined' && data) {
+      if (data.access_token) {
+        localStorage.setItem('serviceToken', data.access_token);
+      }
+      if (data.refresh_token) {
+        localStorage.setItem('refreshToken', data.refresh_token);
+      }
+      if (data.user) {
+        localStorage.setItem('currentUser', JSON.stringify(data.user));
+        localStorage.setItem('role', String(data.user.role));
+      }
+    }
+    return data;
+  } catch (err) {
+    const msg = err.response?.data?.message || err.message || 'Authentication failed. Please check credentials.';
+    throw new Error(msg);
+  }
 }
 
 export async function getAdminProfileApi(token) {
-  const res = await fetch(`${API_BASE}/auth/me`, {
-    headers: {
-      'Authorization': `Bearer ${token}`,
-    },
-  });
-
-  const data = await res.json();
-  if (!res.ok) {
-    throw new Error(data.message || 'Failed to fetch admin profile.');
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const res = await axiosServices.get('auth/me', config);
+    return res.data?.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || err.message || 'Failed to fetch admin profile.');
   }
-  return data.data;
+}
+
+export async function fetchDashboardStatsApi(token) {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const res = await axiosServices.get('admin/dashboard/stats', config);
+    return res.data?.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || err.message || 'Failed to fetch dashboard metrics.');
+  }
+}
+
+export async function fetchAdminAppointmentsApi(token, params = {}) {
+  try {
+    const config = {
+      params,
+      ...(token ? { headers: { Authorization: `Bearer ${token}` } } : {}),
+    };
+    const res = await axiosServices.get('admin/appointments', config);
+    return res.data?.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || err.message || 'Failed to fetch appointments.');
+  }
+}
+
+export async function fetchAdminAppointmentByIdApi(token, id) {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const res = await axiosServices.get(`admin/appointments/${id}`, config);
+    return res.data?.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || err.message || 'Failed to fetch appointment details.');
+  }
+}
+
+export async function updateAdminAppointmentApi(token, id, payload) {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const res = await axiosServices.patch(`admin/appointments/${id}`, payload, config);
+    return res.data?.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || err.message || 'Failed to update appointment.');
+  }
+}
+
+export async function deleteAdminAppointmentApi(token, id) {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const res = await axiosServices.delete(`admin/appointments/${id}`, config);
+    return res.data?.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || err.message || 'Failed to delete appointment.');
+  }
+}
+
+export async function fetchAdminInquiriesApi(token, params = {}) {
+  try {
+    const config = {
+      params,
+      ...(token ? { headers: { Authorization: `Bearer ${token}` } } : {}),
+    };
+    const res = await axiosServices.get('admin/inquiries', config);
+    return res.data?.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || err.message || 'Failed to fetch inquiries.');
+  }
+}
+
+export async function markInquiryReadApi(token, id, is_read = 1) {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const res = await axiosServices.patch(`admin/inquiries/${id}/read`, { is_read }, config);
+    return res.data?.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || err.message || 'Failed to update inquiry status.');
+  }
+}
+
+export async function deleteAdminInquiryApi(token, id) {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const res = await axiosServices.delete(`admin/inquiries/${id}`, config);
+    return res.data?.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || err.message || 'Failed to delete inquiry.');
+  }
+}
+
+export async function adminLogoutApi() {
+  try {
+    const refreshToken =
+      typeof window !== 'undefined'
+        ? localStorage.getItem('refreshToken')
+        : null;
+    await axiosServices.post('auth/logout', { refreshToken });
+  } catch {
+    // ignore server logout failure
+  } finally {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('serviceToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('role');
+      localStorage.removeItem('userId');
+      sessionStorage.clear();
+    }
+  }
 }

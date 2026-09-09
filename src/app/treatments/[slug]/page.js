@@ -2,10 +2,9 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { Clock, Calendar, Sparkles, ChevronRight, CheckCircle2, ShieldAlert, PhoneCall } from 'lucide-react';
+import { Clock, Calendar, Sparkles, CheckCircle2, PhoneCall } from 'lucide-react';
 import { fetchTreatmentBySlug, fetchSettings } from '@/lib/api';
 import { CATEGORY_MAP } from '@/lib/constants';
-import styles from './treatmentDetail.module.css';
 
 export const revalidate = 60;
 
@@ -45,12 +44,16 @@ export default async function TreatmentDetailPage({ params }) {
     return blocks.map((block, idx) => {
       const trimmed = block.trim();
       if (trimmed.startsWith('### ')) {
-        return <h3 key={idx}>{trimmed.replace('### ', '')}</h3>;
+        return (
+          <h3 key={idx} className="font-heading text-xl sm:text-2xl font-bold text-primary mt-6 mb-3">
+            {trimmed.replace('### ', '')}
+          </h3>
+        );
       }
       if (trimmed.startsWith('- ')) {
         const items = trimmed.split('\n').map(line => line.replace(/^- /, ''));
         return (
-          <ul key={idx}>
+          <ul key={idx} className="list-disc pl-5 mb-4 space-y-1.5 text-clinic-muted text-sm sm:text-base">
             {items.map((item, itemIdx) => (
               <li key={itemIdx}>{item}</li>
             ))}
@@ -60,89 +63,88 @@ export default async function TreatmentDetailPage({ params }) {
       if (/^\d+\.\s/.test(trimmed)) {
         const items = trimmed.split('\n').map(line => line.replace(/^\d+\.\s/, ''));
         return (
-          <ol key={idx}>
+          <ol key={idx} className="list-decimal pl-5 mb-4 space-y-1.5 text-clinic-muted text-sm sm:text-base">
             {items.map((item, itemIdx) => (
               <li key={itemIdx}>{item}</li>
             ))}
           </ol>
         );
       }
-      return <p key={idx}>{trimmed}</p>;
+      return (
+        <p key={idx} className="text-sm sm:text-base text-clinic-muted leading-relaxed mb-4">
+          {trimmed}
+        </p>
+      );
     });
   };
 
   return (
-    <div className={styles.pageWrapper}>
+    <div className="min-h-screen bg-clinic-bg pb-20">
       {/* Breadcrumbs */}
-      <div className={styles.breadcrumbsBar}>
-        <div className={`container ${styles.breadcrumbLinks}`}>
-          <Link href="/">Home</Link>
-          <span className={styles.breadcrumbSeparator}>/</span>
-          <Link href="/treatments">Treatments</Link>
-          <span className={styles.breadcrumbSeparator}>/</span>
-          <span className={styles.currentBreadcrumb}>{treatment.title}</span>
+      <div className="bg-clinic-bg-alt/50 border-b border-clinic-border-subtle py-3 text-xs sm:text-sm text-clinic-muted">
+        <div className="container flex items-center gap-2">
+          <Link href="/" className="hover:text-accent transition-colors">Home</Link>
+          <span>/</span>
+          <Link href="/treatments" className="hover:text-accent transition-colors">Treatments</Link>
+          <span>/</span>
+          <span className="text-primary font-medium">{treatment.title}</span>
         </div>
       </div>
 
       {/* Hero Header */}
-      <header className={styles.heroHeader}>
+      <header className="py-12 lg:py-16 bg-gradient-to-b from-primary/5 via-clinic-bg to-clinic-bg border-b border-clinic-border-subtle">
         <div className="container">
-          <div className={styles.heroMeta}>
+          <div className="flex items-center gap-2.5 mb-3">
             <div className="badge">
               <Sparkles size={12} />
               <span>{categoryName}</span>
             </div>
             {treatment.duration && (
-              <div className="badge" style={{ background: 'var(--color-white)', color: 'var(--color-primary)' }}>
+              <div className="badge bg-white text-primary border-primary/20">
                 <Clock size={12} />
                 <span>Duration: {treatment.duration}</span>
               </div>
             )}
           </div>
 
-          <h1 className={styles.heroTitle}>{treatment.title}</h1>
-          <p className={styles.heroSummary}>{treatment.short_description}</p>
+          <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-primary font-bold mb-3">
+            {treatment.title}
+          </h1>
+          <p className="text-base sm:text-lg text-clinic-muted max-w-3xl leading-relaxed">
+            {treatment.short_description}
+          </p>
         </div>
       </header>
 
       {/* Main Content Layout */}
-      <section className={styles.contentSection}>
-        <div className={`container ${styles.contentGrid}`}>
+      <section className="py-12">
+        <div className="container grid grid-cols-1 lg:grid-cols-12 gap-10">
           {/* Main Column */}
-          <div className={styles.mainColumn}>
-            {/* Visual Image */}
-            <div className={styles.featureImageWrapper}>
+          <div className="lg:col-span-8 flex flex-col gap-8">
+            <div className="relative rounded-2xl overflow-hidden shadow-md border border-clinic-border-subtle">
               <Image
                 src={treatment.image_url || 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=1200&q=80'}
                 alt={treatment.title}
                 width={800}
                 height={440}
                 priority
-                className={styles.featureImage}
+                className="w-full h-auto object-cover"
               />
             </div>
 
             {/* Detailed Clinical Profile */}
-            <article className={styles.richText}>
+            <article className="prose max-w-none">
               {renderFormattedDescription(treatment.full_description || treatment.short_description)}
             </article>
 
             {/* Safety & Clinical Guarantee Callout */}
-            <div style={{
-              background: 'var(--color-bg-alt)',
-              padding: '1.75rem',
-              borderRadius: 'var(--radius-md)',
-              border: '1px solid var(--color-border)',
-              display: 'flex',
-              gap: '1.25rem',
-              alignItems: 'flex-start',
-            }}>
-              <CheckCircle2 size={24} color="#10B981" style={{ flexShrink: 0, marginTop: '2px' }} />
+            <div className="bg-clinic-bg-alt p-6 rounded-xl border border-clinic-border flex items-start gap-4">
+              <CheckCircle2 size={24} className="text-emerald-500 shrink-0 mt-0.5" />
               <div>
-                <h4 style={{ fontSize: '1.1rem', marginBottom: '0.4rem', color: 'var(--color-primary)' }}>
+                <h4 className="font-heading text-base font-bold text-primary mb-1">
                   SkinGlow Clinical Safety Assurance
                 </h4>
-                <p style={{ fontSize: '0.92rem', color: 'var(--color-text-muted)', lineHeight: '1.6', margin: 0 }}>
+                <p className="text-xs sm:text-sm text-clinic-muted leading-relaxed">
                   This procedure is administered exclusively using sterile medical disposables and US-FDA cleared clinical equipment under the direct supervision of Board-Certified dermatologists.
                 </p>
               </div>
@@ -150,41 +152,32 @@ export default async function TreatmentDetailPage({ params }) {
           </div>
 
           {/* Sidebar */}
-          <aside className={styles.sidebar}>
+          <aside className="lg:col-span-4 flex flex-col gap-6">
             {/* Direct Booking Card */}
-            <div className={styles.bookingCard}>
-              <h3 className={styles.bookingCardTitle}>Schedule This Treatment</h3>
-              <p className={styles.bookingCardSub}>
+            <div className="bg-white p-6 rounded-2xl border border-clinic-border shadow-md sticky top-24">
+              <h3 className="font-heading text-xl font-bold text-primary mb-1">Schedule This Treatment</h3>
+              <p className="text-xs sm:text-sm text-clinic-muted mb-6 leading-relaxed">
                 Personalized diagnostic evaluation and customized procedure with Dr. Aisha Sharma.
               </p>
 
-              <div className={styles.metricsList}>
-                <div className={styles.metricItem}>
-                  <span className={styles.metricLabel}>
-                    <Clock size={15} />
-                    <span>Session Time</span>
-                  </span>
-                  <span className={styles.metricValue}>{treatment.duration || '45 mins'}</span>
+              <div className="flex flex-col gap-3 mb-6 pb-6 border-b border-clinic-border-subtle text-xs sm:text-sm">
+                <div className="flex items-center justify-between text-clinic-muted">
+                  <span className="flex items-center gap-1.5"><Clock size={14} /> Session Time</span>
+                  <span className="font-semibold text-primary">{treatment.duration || '45 mins'}</span>
                 </div>
-                <div className={styles.metricItem}>
-                  <span className={styles.metricLabel}>
-                    <Sparkles size={15} />
-                    <span>Category</span>
-                  </span>
-                  <span className={styles.metricValue}>{categoryName}</span>
+                <div className="flex items-center justify-between text-clinic-muted">
+                  <span className="flex items-center gap-1.5"><Sparkles size={14} /> Category</span>
+                  <span className="font-semibold text-primary">{categoryName}</span>
                 </div>
-                <div className={styles.metricItem}>
-                  <span className={styles.metricLabel}>
-                    <CheckCircle2 size={15} />
-                    <span>Supervised By</span>
-                  </span>
-                  <span className={styles.metricValue}>MD Dermatologist</span>
+                <div className="flex items-center justify-between text-clinic-muted">
+                  <span className="flex items-center gap-1.5"><CheckCircle2 size={14} /> Supervised By</span>
+                  <span className="font-semibold text-primary">MD Dermatologist</span>
                 </div>
               </div>
 
               <Link
                 href={`/book-appointment?treatment=${treatment.slug}`}
-                className={`btn btn-primary ${styles.sidebarActionBtn}`}
+                className="btn btn-primary w-full justify-center mb-3"
               >
                 <Calendar size={18} />
                 <span>Book This Treatment</span>
@@ -192,7 +185,7 @@ export default async function TreatmentDetailPage({ params }) {
 
               <a
                 href={`tel:${(settings.phone || '+919820123456').replace(/\s+/g, '')}`}
-                className={`btn btn-secondary ${styles.sidebarActionBtn}`}
+                className="btn btn-secondary w-full justify-center text-xs sm:text-sm"
               >
                 <PhoneCall size={16} />
                 <span>Call to Inquire</span>
@@ -201,25 +194,27 @@ export default async function TreatmentDetailPage({ params }) {
 
             {/* Related Treatments */}
             {related.length > 0 && (
-              <div className={styles.relatedBox}>
-                <h4 className={styles.relatedTitle}>Related Procedures</h4>
-                <div className={styles.relatedList}>
+              <div className="bg-white p-6 rounded-2xl border border-clinic-border-subtle shadow-sm">
+                <h4 className="font-heading text-base font-bold text-primary mb-4">Related Procedures</h4>
+                <div className="flex flex-col gap-3">
                   {related.map(item => (
                     <Link
                       key={item.id}
                       href={`/treatments/${item.slug}`}
-                      className={styles.relatedItem}
+                      className="flex items-center gap-3 p-2 rounded-lg hover:bg-clinic-bg transition-colors group"
                     >
                       <Image
                         src={item.image_url || 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=200&q=80'}
                         alt={item.title}
-                        width={60}
-                        height={60}
-                        className={styles.relatedThumb}
+                        width={52}
+                        height={52}
+                        className="w-13 h-13 rounded-lg object-cover"
                       />
-                      <div className={styles.relatedInfo}>
-                        <h4>{item.title}</h4>
-                        <span>{item.duration || 'Learn more'}</span>
+                      <div>
+                        <h5 className="font-heading text-sm font-bold text-primary group-hover:text-accent transition-colors line-clamp-1">
+                          {item.title}
+                        </h5>
+                        <span className="text-xs text-clinic-muted">{item.duration || 'Learn more'}</span>
                       </div>
                     </Link>
                   ))}
