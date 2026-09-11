@@ -171,11 +171,10 @@ export default function AdminInquiriesPage() {
                   setReadFilter(tab.id);
                   setCurrentPage(1);
                 }}
-                className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
-                  readFilter === tab.id
+                className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${readFilter === tab.id
                     ? 'bg-primary text-white shadow-sm'
                     : 'bg-cream/60 hover:bg-cream text-slate-600 border border-sand/40'
-                }`}
+                  }`}
               >
                 {tab.label}
               </button>
@@ -209,21 +208,20 @@ export default function AdminInquiriesPage() {
               const dateObj = new Date(inq.createdAt);
               const formattedDate = !isNaN(dateObj.getTime())
                 ? dateObj.toLocaleDateString('en-IN', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
                 : '';
 
               return (
                 <div
                   key={inq.id}
                   onClick={() => handleOpenModal(inq)}
-                  className={`p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer hover:bg-cream/40 transition-colors ${
-                    isUnread ? 'bg-accent/[0.03] font-medium' : ''
-                  }`}
+                  className={`p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer hover:bg-cream/40 transition-colors ${isUnread ? 'bg-accent/[0.03] font-medium' : ''
+                    }`}
                 >
                   <div className="flex items-start gap-3.5 min-w-0">
                     <div className="pt-1 shrink-0">
@@ -240,9 +238,8 @@ export default function AdminInquiriesPage() {
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span
-                          className={`text-sm ${
-                            isUnread ? 'font-bold text-primary' : 'font-semibold text-slate-800'
-                          }`}
+                          className={`text-sm ${isUnread ? 'font-bold text-primary' : 'font-semibold text-slate-800'
+                            }`}
                         >
                           {inq.name}
                         </span>
@@ -252,9 +249,8 @@ export default function AdminInquiriesPage() {
                       </div>
 
                       <p
-                        className={`text-xs mt-0.5 truncate ${
-                          isUnread ? 'font-semibold text-primary' : 'text-slate-700'
-                        }`}
+                        className={`text-xs mt-0.5 truncate ${isUnread ? 'font-semibold text-primary' : 'text-slate-700'
+                          }`}
                       >
                         {inq.subject}
                       </p>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Sparkles } from 'lucide-react';
-import { fetchTreatments } from '@/lib/api';
+import { fetchTreatments, fetchCategoriesApi } from '@/lib/api';
 import TreatmentsList from '@/components/treatments/TreatmentsList';
 
 export const metadata = {
@@ -11,7 +11,10 @@ export const metadata = {
 export const revalidate = 60;
 
 export default async function TreatmentsPage() {
-  const treatments = await fetchTreatments();
+  const [treatments, categories] = await Promise.all([
+    fetchTreatments(),
+    fetchCategoriesApi(),
+  ]);
 
   return (
     <div className="min-h-screen bg-clinic-bg pb-20">
@@ -33,7 +36,7 @@ export default async function TreatmentsPage() {
 
       {/* Main Listing Section */}
       <main className="container">
-        <TreatmentsList initialTreatments={treatments} />
+        <TreatmentsList initialTreatments={treatments} initialCategories={categories} />
       </main>
     </div>
   );

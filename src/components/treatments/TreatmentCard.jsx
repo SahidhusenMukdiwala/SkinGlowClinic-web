@@ -5,7 +5,10 @@ import { Clock, ArrowRight, Sparkles } from 'lucide-react';
 import { CATEGORY_MAP } from '@/lib/constants';
 
 export default function TreatmentCard({ treatment }) {
-  const categoryName = CATEGORY_MAP[treatment.category] || 'Clinical Aesthetic';
+  const categoryName =
+    treatment.category?.name ||
+    CATEGORY_MAP[treatment.category_id || treatment.category] ||
+    'Clinical Aesthetic';
 
   return (
     <article className="bg-white rounded-xl overflow-hidden border border-clinic-border-subtle hover:border-accent/40 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group">

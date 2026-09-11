@@ -88,6 +88,11 @@ export default function AdminLayout({ children }) {
   let pageTitle = 'Dashboard Overview';
   if (pathname.includes('/admin/appointments')) pageTitle = 'Appointments Management';
   if (pathname.includes('/admin/inquiries')) pageTitle = 'Patient Inquiries Triage';
+  if (pathname.includes('/admin/categories')) pageTitle = 'Categories Management';
+  if (pathname.includes('/admin/treatments')) pageTitle = 'Treatments Catalog';
+  if (pathname.includes('/admin/testimonials')) pageTitle = 'Patient Testimonials';
+  if (pathname.includes('/admin/blogs')) pageTitle = 'Clinical Blogs & Insights';
+  if (pathname.includes('/admin/settings')) pageTitle = 'Clinic Site Settings';
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] flex">

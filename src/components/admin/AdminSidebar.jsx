@@ -14,9 +14,10 @@ import {
   Star,
   FileText,
   Settings,
+  Tags,
 } from 'lucide-react';
 
-const NAV_ITEMS = [
+const OPERATIONS_NAV = [
   {
     label: 'Dashboard',
     href: '/admin/dashboard',
@@ -34,15 +35,60 @@ const NAV_ITEMS = [
   },
 ];
 
-const UPCOMING_ITEMS = [
-  { label: 'Treatments', icon: Layers },
-  { label: 'Testimonials', icon: Star },
-  { label: 'Blogs', icon: FileText },
-  { label: 'Site Settings', icon: Settings },
+const CONTENT_NAV = [
+  {
+    label: 'Categories',
+    href: '/admin/categories',
+    icon: Tags,
+  },
+  {
+    label: 'Treatments',
+    href: '/admin/treatments',
+    icon: Layers,
+  },
+  {
+    label: 'Testimonials',
+    href: '/admin/testimonials',
+    icon: Star,
+  },
+  {
+    label: 'Blogs & Insights',
+    href: '/admin/blogs',
+    icon: FileText,
+  },
+  {
+    label: 'Site Settings',
+    href: '/admin/settings',
+    icon: Settings,
+  },
 ];
 
 export default function AdminSidebar({ mobileOpen, onClose }) {
   const pathname = usePathname();
+
+  const renderLink = (item) => {
+    const Icon = item.icon;
+    const isActive =
+      pathname === item.href ||
+      (item.href !== '/admin/dashboard' && pathname.startsWith(item.href));
+
+    return (
+      <Link
+        key={item.href}
+        href={item.href}
+        onClick={() => {
+          if (onClose) onClose();
+        }}
+        className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all ${isActive
+            ? 'bg-accent text-primary font-semibold shadow-gold'
+            : 'text-slate-300 hover:bg-white/10 hover:text-white'
+          }`}
+      >
+        <Icon size={18} className={isActive ? 'text-primary' : 'text-slate-400'} />
+        <span>{item.label}</span>
+      </Link>
+    );
+  };
 
   return (
     <>
@@ -56,9 +102,8 @@ export default function AdminSidebar({ mobileOpen, onClose }) {
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 w-72 bg-primary text-white flex flex-col border-r border-white/10 transition-transform duration-300 ease-in-out lg:translate-x-0 ${
-          mobileOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={`fixed top-0 bottom-0 left-0 z-50 w-72 bg-primary text-white flex flex-col border-r border-white/10 transition-transform duration-300 ease-in-out lg:translate-x-0 ${mobileOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
       >
         {/* Brand Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
@@ -93,27 +138,7 @@ export default function AdminSidebar({ mobileOpen, onClose }) {
               Core Operations
             </div>
             <nav className="space-y-1">
-              {NAV_ITEMS.map((item) => {
-                const Icon = item.icon;
-                const isActive = pathname === item.href || (item.href !== '/admin/dashboard' && pathname.startsWith(item.href));
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => {
-                      if (onClose) onClose();
-                    }}
-                    className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all ${
-                      isActive
-                        ? 'bg-accent text-primary font-semibold shadow-gold'
-                        : 'text-slate-300 hover:bg-white/10 hover:text-white'
-                    }`}
-                  >
-                    <Icon size={18} className={isActive ? 'text-primary' : 'text-slate-400'} />
-                    <span>{item.label}</span>
-                  </Link>
-                );
-              })}
+              {OPERATIONS_NAV.map(renderLink)}
             </nav>
           </div>
 
@@ -122,24 +147,13 @@ export default function AdminSidebar({ mobileOpen, onClose }) {
               <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                 Content Management
               </span>
-              <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/10 text-accent font-semibold">
-                Phase 5
+              <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold">
+                Active
               </span>
             </div>
-            <div className="space-y-1 opacity-50">
-              {UPCOMING_ITEMS.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <div
-                    key={item.label}
-                    className="flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm text-slate-400 cursor-not-allowed"
-                  >
-                    <Icon size={18} className="text-slate-500" />
-                    <span>{item.label}</span>
-                  </div>
-                );
-              })}
-            </div>
+            <nav className="space-y-1">
+              {CONTENT_NAV.map(renderLink)}
+            </nav>
           </div>
         </div>
 

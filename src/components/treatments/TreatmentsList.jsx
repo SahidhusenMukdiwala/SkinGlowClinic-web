@@ -5,13 +5,21 @@ import { Search } from 'lucide-react';
 import { TREATMENT_CATEGORIES } from '@/lib/constants';
 import TreatmentCard from './TreatmentCard';
 
-export default function TreatmentsList({ initialTreatments = [] }) {
+export default function TreatmentsList({ initialTreatments = [], initialCategories = [] }) {
   const [activeCategory, setActiveCategory] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
 
+  const categories = useMemo(() => {
+    if (initialCategories && initialCategories.length > 0) {
+      return [{ id: 0, name: 'All Treatments' }, ...initialCategories];
+    }
+    return TREATMENT_CATEGORIES;
+  }, [initialCategories]);
+
   const filteredTreatments = useMemo(() => {
-    return initialTreatments.filter(t => {
-      const matchesCategory = activeCategory === 0 || t.category === activeCategory;
+    return initialTreatments.filter((t) => {
+      const catId = t.category_id || t.category?.id || t.category;
+      const matchesCategory = activeCategory === 0 || catId === activeCategory;
       const matchesSearch =
         searchQuery.trim() === '' ||
         t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -37,7 +45,7 @@ export default function TreatmentsList({ initialTreatments = [] }) {
 
         {/* Category Filter Pills */}
         <div className="flex items-center flex-wrap gap-2 justify-center md:justify-end w-full">
-          {TREATMENT_CATEGORIES.map(cat => {
+          {categories.map((cat) => {
             const isActive = activeCategory === cat.id;
             return (
               <button

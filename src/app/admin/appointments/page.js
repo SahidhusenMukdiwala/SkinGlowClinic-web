@@ -185,11 +185,10 @@ export default function AdminAppointmentsPage() {
                   setStatusFilter(tab.id);
                   setCurrentPage(1);
                 }}
-                className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
-                  statusFilter === tab.id
+                className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${statusFilter === tab.id
                     ? 'bg-primary text-white shadow-sm'
                     : 'bg-cream/60 hover:bg-cream text-slate-600 border border-sand/40'
-                }`}
+                  }`}
               >
                 {tab.label}
               </button>
@@ -239,12 +238,12 @@ export default function AdminAppointmentsPage() {
                   const d = new Date(appt.preferred_date_time);
                   const formattedDateTime = !isNaN(d.getTime())
                     ? d.toLocaleDateString('en-IN', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })
+                      day: 'numeric',
+                      month: 'short',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })
                     : 'Invalid Date';
 
                   return (
@@ -349,11 +348,10 @@ export default function AdminAppointmentsPage() {
             <div className="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
               {updateMsg && (
                 <div
-                  className={`p-3 rounded-xl text-xs font-medium flex items-center gap-2 ${
-                    updateMsg.type === 'success'
+                  className={`p-3 rounded-xl text-xs font-medium flex items-center gap-2 ${updateMsg.type === 'success'
                       ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                       : 'bg-red-50 text-red-700 border border-red-200'
-                  }`}
+                    }`}
                 >
                   {updateMsg.type === 'success' ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
                   <span>{updateMsg.text}</span>
@@ -449,11 +447,10 @@ export default function AdminAppointmentsPage() {
                         key={st.id}
                         type="button"
                         onClick={() => setEditStatus(st.id)}
-                        className={`py-2 px-3 rounded-xl text-xs font-semibold border transition-all ${
-                          editStatus === st.id
+                        className={`py-2 px-3 rounded-xl text-xs font-semibold border transition-all ${editStatus === st.id
                             ? 'bg-primary text-white border-primary shadow-sm'
                             : 'bg-white text-slate-600 border-sand hover:bg-cream'
-                        }`}
+                          }`}
                       >
                         {st.label}
                       </button>

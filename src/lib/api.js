@@ -18,7 +18,7 @@ const FALLBACK_TREATMENTS = [
     slug: 'medical-chemical-peels',
     category: 1,
     duration: '30-45 mins',
-    image_url: 'https://images.unsplash.com/photo-1512290900672-1a0149021873?auto=format&fit=crop&w=1000&q=80',
+    image_url: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=1000&q=80',
     short_description: 'Tailored AHA/BHA and TCA clinical peels designed to resurface hyperpigmentation, active acne, and stubborn sun spots.',
     full_description: 'Our dermatologist-supervised chemical peeling protocols utilize bespoke blends of glycolic acid, salicylic acid, lactic acid, and modified TCA to stimulate regulated cellular turnover and collagen renewal.\n\n### Treatment Highlights\n- **Acne Clarifying Peel**: Penetrates deep into the pilosebaceous units to dissolve comedones, regulate sebum, and diminish P. acnes bacteria.\n- **Radiance Melasma Peel**: Gently breaks down melanin clusters, visibly fading post-inflammatory hyperpigmentation (PIH) and melasma patches.\n- **Renewal Anti-Aging Peel**: Accelerates dermal regeneration, minimizing shallow fine lines and refining coarse skin texture.\n\nExpect mild tingling during application followed by subtle flaking over 3 to 5 days, revealing smoother, clearer skin.',
   },
@@ -101,6 +101,8 @@ const FALLBACK_TESTIMONIALS = [
     patient_image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80',
     review_text: 'My experience with HydraFacial Elite MD at SkinGlow Clinic was beyond exceptional. Dr. Aisha and her team analyzed my skin barrier first, and after just one session, my stubborn post-inflammatory redness was virtually gone. The clinic hygiene and ambiance are world-class.',
     rating: 5,
+    treatment_name: 'HydraFacial Elite MD',
+    date: 'August 2026',
   },
   {
     id: 2,
@@ -108,6 +110,8 @@ const FALLBACK_TESTIMONIALS = [
     patient_image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
     review_text: 'I underwent 4 sessions of PRP Hair Bio-Restoration. The results have been remarkable — hair fall stopped entirely by the second month and my crown density has significantly thickened. Truly a physician-led clinical experience with no false promises.',
     rating: 5,
+    treatment_name: 'PRP Hair Bio-Restoration',
+    date: 'July 2026',
   },
   {
     id: 3,
@@ -115,6 +119,8 @@ const FALLBACK_TESTIMONIALS = [
     patient_image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
     review_text: 'The Triple-Wavelength Laser Hair Reduction is painless! The cooling tip is amazing and there was zero irritation afterwards. After 3 sessions, I barely have any regrowth. Best skincare decision I have made.',
     rating: 5,
+    treatment_name: 'Triple-Wavelength Laser Hair Reduction',
+    date: 'June 2026',
   },
   {
     id: 4,
@@ -122,6 +128,100 @@ const FALLBACK_TESTIMONIALS = [
     patient_image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80',
     review_text: 'Dr. Sharma has an artistic eye for natural anti-aging enhancements. The subtle wrinkle smoothing took years off my tired expression without making my forehead look frozen. Transparent consultation and meticulous care.',
     rating: 5,
+    treatment_name: 'Botox Anti-Wrinkle Smoothing',
+    date: 'May 2026',
+  },
+  {
+    id: 5,
+    patient_name: 'Meera Nambiar',
+    patient_image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
+    review_text: 'I suffered from hormonal cystic acne and stubborn pigmentation for years. The personalized chemical peel regimen combined with medical skincare guidance cleared my complexion within 8 weeks. I feel so confident going makeup-free now.',
+    rating: 5,
+    treatment_name: 'Advanced Medical Chemical Peels',
+    date: 'April 2026',
+  },
+  {
+    id: 6,
+    patient_name: 'Sameer Merchant',
+    patient_image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=400&q=80',
+    review_text: 'The Q-Switched laser toning completely revitalized my dull skin and erased persistent sun spots from outdoor sports. Exceptional clinical care, zero downtime, and Dr. Sharma explains every step of the procedure with great clarity.',
+    rating: 5,
+    treatment_name: 'Q-Switched Laser Toning',
+    date: 'March 2026',
+  },
+];
+
+const FALLBACK_BLOGS = [
+  {
+    id: 1,
+    title: 'The Clinical Science Behind HydraFacial: Why Vortex Infusion Works',
+    slug: 'clinical-science-behind-hydrafacial',
+    cover_image: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=1200&q=80',
+    content: `<h2>Understanding Hydradermabrasion Mechanisms</h2>
+<p>Modern clinical dermatology has moved away from harsh manual extractions that disrupt the stratum corneum barrier. Instead, patented vortex-fusion technology combines simultaneous vacuum extraction with pressurized micro-droplet dermal saturation.</p>
+
+<h3>Key Benefits for Fitzpatrick Types III–VI</h3>
+<ul>
+  <li><strong>Zero Barrier Damage:</strong> Unlike mechanical microdermabrasion crystals, gentle fluid vortex minimizes post-inflammatory hyperpigmentation (PIH).</li>
+  <li><strong>Targeted Booster Penetration:</strong> Customized peptides and cross-linked hyaluronic acid penetrate up to 30% deeper into stratum corneum micro-channels.</li>
+  <li><strong>Immediate Dewy Clarification:</strong> Dead keratinized corneocytes are painlessly aspirated without downtime.</li>
+</ul>
+
+<blockquote>"A healthy skin barrier requires regular cellular exfoliation without triggering the dermal inflammatory cascade." — Dr. Aisha Sharma, MD</blockquote>
+
+<h3>Recommended Clinical Frequency</h3>
+<p>For optimal barrier support and pore clarity, dermatologists recommend monthly sessions, particularly during seasonal climate transitions.</p>`,
+    category: 'Skin Science',
+    read_time: '4 min read',
+    author: 'Dr. Aisha Sharma, MD',
+    createdAt: '2026-08-15T10:00:00.000Z',
+    is_published: 1,
+  },
+  {
+    id: 2,
+    title: 'PRP vs. Low-Level Laser Therapy: Choosing the Right Hair Regrowth Protocol',
+    slug: 'prp-vs-low-level-laser-hair-regrowth',
+    cover_image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1200&q=80',
+    content: `<h2>Combating Androgenetic Alopecia with Evidence-Based Science</h2>
+<p>Follicular miniaturization is driven by DHT binding to androgen receptors on dermal papilla cells. Both Autologous Platelet-Rich Plasma (PRP) and Low-Level Laser Therapy (LLLT) present clinically proven non-surgical solutions.</p>
+
+<h3>Platelet-Rich Plasma (PRP) Therapy</h3>
+<p>PRP concentrates bioactive growth factors—specifically VEGF, PDGF, and FGF—derived from the patient's own autologous plasma. When micro-infused around weakened follicles, these growth factors stimulate neo-vascularization and transition telogen (resting) follicles into active anagen growth.</p>
+
+<h3>Low-Level Laser Light Stimulation (655nm)</h3>
+<p>Cold medical laser diodes stimulate mitochondrial cytochrome c oxidase, boosting ATP energy production directly within follicular stem cells. LLLT is 100% painless and serves as an exceptional synergistic maintenance protocol alongside PRP.</p>
+
+<h3>The Dual Combination Protocol</h3>
+<p>In clinical trials, patients undergoing 4 sessions of PRP paired with bi-weekly LLLT demonstrated a <strong>38% greater terminal hair count</strong> at 6 months compared to monotherapy.</p>`,
+    category: 'Hair Restoration',
+    read_time: '6 min read',
+    author: 'Dr. Aisha Sharma, MD',
+    createdAt: '2026-07-28T09:30:00.000Z',
+    is_published: 1,
+  },
+  {
+    id: 3,
+    title: 'Debunking Anti-Aging Myths: Natural Neuromodulator Micro-Dosing Explained',
+    slug: 'debunking-anti-aging-myths-neuromodulators',
+    cover_image: 'https://images.unsplash.com/photo-1526045612212-70caf35c14df?auto=format&fit=crop&w=1200&q=80',
+    content: `<h2>The Philosophy of Natural Facial Architecture</h2>
+<p>The biggest misconception surrounding aesthetic neurotoxin treatments is the fear of looking "frozen" or "emotionless." Modern clinical aesthetics focuses strictly on micro-dosing and precise anatomical muscular targeting.</p>
+
+<h3>How Micro-Dosing Preserves Dynamic Emotion</h3>
+<p>By administering calibrated micro-droplets directly into the hyperactive fibers of the frontalis, procerus, and orbicularis oculi muscles, we soften dynamic wrinkles while leaving baseline facial animation completely intact.</p>
+
+<ul>
+  <li><strong>Subtle Softening:</strong> Frown lines and forehead furrows are smoothed without dropping brow height.</li>
+  <li><strong>Preventative Aging:</strong> Prevents shallow expression lines from etching into permanent dermal static scars.</li>
+  <li><strong>Zero Downtime:</strong> The 15-minute lunchtime procedure leaves no visible traces.</li>
+</ul>
+
+<blockquote>"Great aesthetic medicine is invisible. People should notice that you look radiant, well-rested, and glowing—never that you have had a procedure done." — Dr. Aisha Sharma, MD</blockquote>`,
+    category: 'Anti-Aging',
+    read_time: '5 min read',
+    author: 'Dr. Aisha Sharma, MD',
+    createdAt: '2026-06-19T14:15:00.000Z',
+    is_published: 1,
   },
 ];
 
@@ -151,7 +251,12 @@ export async function fetchTreatmentBySlug(slug) {
     const res = await axiosServices.get(`treatments/${slug}`);
     return res.data?.data || null;
   } catch {
-    return FALLBACK_TREATMENTS.find((t) => t.slug === slug) || null;
+    const found = FALLBACK_TREATMENTS.find((t) => t.slug === slug);
+    if (!found) return null;
+    const related = FALLBACK_TREATMENTS.filter(
+      (t) => t.id !== found.id && t.category === found.category
+    ).slice(0, 3);
+    return { treatment: found, related };
   }
 }
 
@@ -161,6 +266,41 @@ export async function fetchTestimonials() {
     return res.data?.data || FALLBACK_TESTIMONIALS;
   } catch {
     return FALLBACK_TESTIMONIALS;
+  }
+}
+
+export async function fetchBlogs(params = {}) {
+  try {
+    const res = await axiosServices.get('blogs', { params });
+    const data = res.data?.data;
+    if (data && Array.isArray(data.blogs)) {
+      return data;
+    }
+    return {
+      blogs: Array.isArray(data) ? data : FALLBACK_BLOGS,
+      total: Array.isArray(data) ? data.length : FALLBACK_BLOGS.length,
+      totalPages: 1,
+      currentPage: 1,
+    };
+  } catch {
+    return {
+      blogs: FALLBACK_BLOGS,
+      total: FALLBACK_BLOGS.length,
+      totalPages: 1,
+      currentPage: 1,
+    };
+  }
+}
+
+export async function fetchBlogBySlug(slug) {
+  try {
+    const res = await axiosServices.get(`blogs/${slug}`);
+    return res.data?.data || null;
+  } catch {
+    const found = FALLBACK_BLOGS.find((b) => b.slug === slug);
+    if (!found) return null;
+    const related = FALLBACK_BLOGS.filter((b) => b.id !== found.id).slice(0, 3);
+    return { blog: found, related };
   }
 }
 
@@ -315,6 +455,343 @@ export async function deleteAdminInquiryApi(token, id) {
     return res.data?.data;
   } catch (err) {
     throw new Error(err.response?.data?.message || err.message || 'Failed to delete inquiry.');
+  }
+}
+
+// ==============================|| CATEGORIES API ||============================== //
+
+export async function fetchCategoriesApi() {
+  try {
+    const res = await axiosServices.get('categories');
+    return res.data?.data || [];
+  } catch (err) {
+    console.error('Failed to fetch categories:', err);
+    return [];
+  }
+}
+
+export async function fetchAdminCategoriesApi(token, params = {}) {
+  try {
+    const config = {
+      params,
+      ...(token ? { headers: { Authorization: `Bearer ${token}` } } : {}),
+    };
+    const res = await axiosServices.get('admin/categories', config);
+    return res.data?.data || [];
+  } catch (err) {
+    throw new Error(err.response?.data?.message || err.message || 'Failed to fetch categories.');
+  }
+}
+
+export async function createAdminCategoryApi(token, payload) {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const res = await axiosServices.post('admin/categories', payload, config);
+    return res.data?.data;
+  } catch (err) {
+    const data = err.response?.data;
+    const msg = data?.errors?.[0]?.message || data?.message || err.message || 'Failed to create category.';
+    throw new Error(msg);
+  }
+}
+
+export async function updateAdminCategoryApi(token, id, payload) {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const res = await axiosServices.put(`admin/categories/${id}`, payload, config);
+    return res.data?.data;
+  } catch (err) {
+    const data = err.response?.data;
+    const msg = data?.errors?.[0]?.message || data?.message || err.message || 'Failed to update category.';
+    throw new Error(msg);
+  }
+}
+
+export async function deleteAdminCategoryApi(token, id) {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const res = await axiosServices.delete(`admin/categories/${id}`, config);
+    return res.data;
+  } catch (err) {
+    const data = err.response?.data;
+    const msg = data?.message || err.message || 'Failed to delete category.';
+    throw new Error(msg);
+  }
+}
+
+// ==============================|| PHASE 5: TREATMENTS CRUD ||============================== //
+
+export async function fetchAdminTreatmentsApi(token, params = {}) {
+  try {
+    const config = {
+      params,
+      ...(token ? { headers: { Authorization: `Bearer ${token}` } } : {}),
+    };
+    const res = await axiosServices.get('admin/treatments', config);
+    return res.data?.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || err.message || 'Failed to fetch treatments.');
+  }
+}
+
+export async function fetchAdminTreatmentByIdApi(token, id) {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const res = await axiosServices.get(`admin/treatments/${id}`, config);
+    return res.data?.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || err.message || 'Failed to fetch treatment details.');
+  }
+}
+
+export async function createAdminTreatmentApi(token, payload) {
+  try {
+    const isFormData = typeof FormData !== 'undefined' && payload instanceof FormData;
+    const config = {
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(isFormData ? { 'Content-Type': 'multipart/form-data' } : {}),
+      },
+    };
+    const res = await axiosServices.post('admin/treatments', payload, config);
+    return res.data?.data;
+  } catch (err) {
+    const data = err.response?.data;
+    const msg = data?.errors?.[0]?.message || data?.message || err.message || 'Failed to create treatment.';
+    throw new Error(msg);
+  }
+}
+
+export async function updateAdminTreatmentApi(token, id, payload) {
+  try {
+    const isFormData = typeof FormData !== 'undefined' && payload instanceof FormData;
+    const config = {
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(isFormData ? { 'Content-Type': 'multipart/form-data' } : {}),
+      },
+    };
+    const res = await axiosServices.put(`admin/treatments/${id}`, payload, config);
+    return res.data?.data;
+  } catch (err) {
+    const data = err.response?.data;
+    const msg = data?.errors?.[0]?.message || data?.message || err.message || 'Failed to update treatment.';
+    throw new Error(msg);
+  }
+}
+
+export async function deleteAdminTreatmentApi(token, id) {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const res = await axiosServices.delete(`admin/treatments/${id}`, config);
+    return res.data?.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || err.message || 'Failed to delete treatment.');
+  }
+}
+
+// ==============================|| PHASE 5: TESTIMONIALS CRUD ||============================== //
+
+export async function fetchAdminTestimonialsApi(token, params = {}) {
+  try {
+    const config = {
+      params,
+      ...(token ? { headers: { Authorization: `Bearer ${token}` } } : {}),
+    };
+    const res = await axiosServices.get('admin/testimonials', config);
+    return res.data?.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || err.message || 'Failed to fetch testimonials.');
+  }
+}
+
+export async function fetchAdminTestimonialByIdApi(token, id) {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const res = await axiosServices.get(`admin/testimonials/${id}`, config);
+    return res.data?.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || err.message || 'Failed to fetch testimonial.');
+  }
+}
+
+export async function createAdminTestimonialApi(token, payload) {
+  try {
+    const isFormData = typeof FormData !== 'undefined' && payload instanceof FormData;
+    const config = {
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(isFormData ? { 'Content-Type': 'multipart/form-data' } : {}),
+      },
+    };
+    const res = await axiosServices.post('admin/testimonials', payload, config);
+    return res.data?.data;
+  } catch (err) {
+    const data = err.response?.data;
+    const msg = data?.errors?.[0]?.message || data?.message || err.message || 'Failed to create testimonial.';
+    throw new Error(msg);
+  }
+}
+
+export async function updateAdminTestimonialApi(token, id, payload) {
+  try {
+    const isFormData = typeof FormData !== 'undefined' && payload instanceof FormData;
+    const config = {
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(isFormData ? { 'Content-Type': 'multipart/form-data' } : {}),
+      },
+    };
+    const res = await axiosServices.put(`admin/testimonials/${id}`, payload, config);
+    return res.data?.data;
+  } catch (err) {
+    const data = err.response?.data;
+    const msg = data?.errors?.[0]?.message || data?.message || err.message || 'Failed to update testimonial.';
+    throw new Error(msg);
+  }
+}
+
+export async function deleteAdminTestimonialApi(token, id) {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const res = await axiosServices.delete(`admin/testimonials/${id}`, config);
+    return res.data?.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || err.message || 'Failed to delete testimonial.');
+  }
+}
+
+// ==============================|| PHASE 5: BLOGS (PUBLIC & ADMIN) ||============================== //
+
+export async function fetchBlogsApi(params = {}) {
+  try {
+    const res = await axiosServices.get('blogs', { params });
+    return res.data?.data || { blogs: [], total: 0, totalPages: 1 };
+  } catch {
+    return { blogs: [], total: 0, totalPages: 1 };
+  }
+}
+
+export async function fetchBlogBySlugApi(slug) {
+  try {
+    const res = await axiosServices.get(`blogs/${slug}`);
+    return res.data?.data || null;
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchAdminBlogsApi(token, params = {}) {
+  try {
+    const config = {
+      params,
+      ...(token ? { headers: { Authorization: `Bearer ${token}` } } : {}),
+    };
+    const res = await axiosServices.get('admin/blogs', config);
+    return res.data?.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || err.message || 'Failed to fetch blogs.');
+  }
+}
+
+export async function fetchAdminBlogByIdApi(token, id) {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const res = await axiosServices.get(`admin/blogs/${id}`, config);
+    return res.data?.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || err.message || 'Failed to fetch blog article.');
+  }
+}
+
+export async function createAdminBlogApi(token, payload) {
+  try {
+    const isFormData = typeof FormData !== 'undefined' && payload instanceof FormData;
+    const config = {
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(isFormData ? { 'Content-Type': 'multipart/form-data' } : {}),
+      },
+    };
+    const res = await axiosServices.post('admin/blogs', payload, config);
+    return res.data?.data;
+  } catch (err) {
+    const data = err.response?.data;
+    const msg = data?.errors?.[0]?.message || data?.message || err.message || 'Failed to create blog post.';
+    throw new Error(msg);
+  }
+}
+
+export async function updateAdminBlogApi(token, id, payload) {
+  try {
+    const isFormData = typeof FormData !== 'undefined' && payload instanceof FormData;
+    const config = {
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(isFormData ? { 'Content-Type': 'multipart/form-data' } : {}),
+      },
+    };
+    const res = await axiosServices.put(`admin/blogs/${id}`, payload, config);
+    return res.data?.data;
+  } catch (err) {
+    const data = err.response?.data;
+    const msg = data?.errors?.[0]?.message || data?.message || err.message || 'Failed to update blog post.';
+    throw new Error(msg);
+  }
+}
+
+export async function deleteAdminBlogApi(token, id) {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const res = await axiosServices.delete(`admin/blogs/${id}`, config);
+    return res.data?.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || err.message || 'Failed to delete blog post.');
+  }
+}
+
+// ==============================|| PHASE 5: SITE SETTINGS ||============================== //
+
+export async function fetchAdminSettingsApi(token) {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const res = await axiosServices.get('admin/settings', config);
+    return res.data?.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || err.message || 'Failed to fetch settings.');
+  }
+}
+
+export async function updateAdminSettingsApi(token, payload) {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const res = await axiosServices.put('admin/settings', payload, config);
+    return res.data?.data;
+  } catch (err) {
+    const data = err.response?.data;
+    const msg = data?.errors?.[0]?.message || data?.message || err.message || 'Failed to save site settings.';
+    throw new Error(msg);
+  }
+}
+
+// ==============================|| PHASE 5: DIRECT IMAGE UPLOAD ||============================== //
+
+export async function uploadImageApi(token, file, folder = 'skinglowclinic/general') {
+  try {
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('folder', folder);
+
+    const config = {
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        'Content-Type': 'multipart/form-data',
+      },
+    };
+    const res = await axiosServices.post('admin/upload', formData, config);
+    return res.data?.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || err.message || 'Failed to upload image.');
   }
 }
 
