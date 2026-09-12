@@ -23,6 +23,7 @@ import {
   markInquiryReadApi,
   deleteAdminInquiryApi,
 } from '@/lib/api';
+import DeleteConfirmModal from '@/components/admin/DeleteConfirmModal';
 
 export default function AdminInquiriesPage() {
   const [inquiries, setInquiries] = useState([]);
@@ -39,6 +40,10 @@ export default function AdminInquiriesPage() {
   // Selected Inquiry for Modal
   const [selectedInq, setSelectedInq] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+
+  // Delete Confirmation State
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   const loadInquiries = useCallback(async () => {
     setLoading(true);
@@ -103,15 +108,19 @@ export default function AdminInquiriesPage() {
     }
   };
 
-  const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to permanently delete this inquiry?')) return;
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
     try {
       const token = localStorage.getItem('serviceToken');
-      await deleteAdminInquiryApi(token, selectedInq.id);
+      await deleteAdminInquiryApi(token, deleteTarget.id);
+      setDeleteTarget(null);
       setModalOpen(false);
       loadInquiries();
     } catch (err) {
       alert(err.message || 'Failed to delete inquiry');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -387,7 +396,7 @@ export default function AdminInquiriesPage() {
               <div className="flex items-center justify-between pt-3 border-t border-sand/40">
                 <button
                   type="button"
-                  onClick={handleDelete}
+                  onClick={() => setDeleteTarget(selectedInq)}
                   className="inline-flex items-center gap-1 text-xs font-semibold text-red-600 hover:text-red-700 py-2 px-3 rounded-xl hover:bg-red-50 transition-colors"
                 >
                   <Trash2 size={15} />
@@ -415,6 +424,18 @@ export default function AdminInquiriesPage() {
           </div>
         </div>
       )}
+
+      {/* Custom Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleConfirmDelete}
+        loading={deleting}
+        title="Delete Inquiry"
+        itemName={deleteTarget ? `From ${deleteTarget.name} (${deleteTarget.email})` : ''}
+        message="Are you sure you want to delete this patient inquiry?"
+        confirmLabel="Delete Inquiry"
+      />
     </div>
   );
 }

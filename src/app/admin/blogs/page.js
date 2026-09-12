@@ -26,6 +26,7 @@ import {
 } from '@/lib/api';
 import ImageUpload from '@/components/admin/ImageUpload';
 import RichTextEditor from '@/components/admin/RichTextEditor';
+import DeleteConfirmModal from '@/components/admin/DeleteConfirmModal';
 
 const DEFAULT_COVER = 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=1200&q=80';
 
@@ -47,6 +48,10 @@ export default function AdminBlogsPage() {
   const [selectedBlog, setSelectedBlog] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [formMsg, setFormMsg] = useState(null);
+
+  // Delete Confirmation State
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   // Form Fields
   const [formTitle, setFormTitle] = useState('');
@@ -165,15 +170,18 @@ export default function AdminBlogsPage() {
     }
   };
 
-  const handleDelete = async (id, title) => {
-    if (!window.confirm(`Are you sure you want to permanently delete "${title}"?`)) return;
-
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
     try {
       const token = localStorage.getItem('serviceToken');
-      await deleteAdminBlogApi(token, id);
+      await deleteAdminBlogApi(token, deleteTarget.id);
+      setDeleteTarget(null);
       loadBlogs();
     } catch (err) {
       alert(err.message || 'Failed to delete blog post.');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -352,7 +360,7 @@ export default function AdminBlogsPage() {
                           </button>
                           <button
                             type="button"
-                            onClick={() => handleDelete(blog.id, blog.title)}
+                            onClick={() => setDeleteTarget(blog)}
                             className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
                             title="Delete Article"
                           >
@@ -550,6 +558,18 @@ export default function AdminBlogsPage() {
           </div>
         </div>
       )}
+
+      {/* Custom Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleConfirmDelete}
+        loading={deleting}
+        title="Delete Article"
+        itemName={deleteTarget?.title}
+        message="Are you sure you want to delete this article?"
+        confirmLabel="Delete Article"
+      />
     </div>
   );
 }

@@ -18,6 +18,7 @@ import {
   ChevronRight,
   MoreVertical,
   Trash2,
+  Edit2,
   Save,
   X,
   Sparkles,
@@ -27,6 +28,7 @@ import {
   updateAdminAppointmentApi,
   deleteAdminAppointmentApi,
 } from '@/lib/api';
+import DeleteConfirmModal from '@/components/admin/DeleteConfirmModal';
 
 const STATUS_CONFIG = {
   0: { label: 'Pending', bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200' },
@@ -40,6 +42,10 @@ export default function AdminAppointmentsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Delete Confirmation State
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+
   // Filters & Pagination
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -52,6 +58,7 @@ export default function AdminAppointmentsPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editStatus, setEditStatus] = useState(0);
   const [editNotes, setEditNotes] = useState('');
+  const [cancelReason, setCancelReason] = useState('');
   const [updating, setUpdating] = useState(false);
   const [updateMsg, setUpdateMsg] = useState(null);
 
@@ -87,27 +94,41 @@ export default function AdminAppointmentsPage() {
     setSelectedAppt(appt);
     setEditStatus(appt.status);
     setEditNotes(appt.admin_notes || '');
+    setCancelReason('');
     setUpdateMsg(null);
     setModalOpen(true);
   };
 
   const handleSaveAppointment = async (e) => {
     e.preventDefault();
-    setUpdating(true);
     setUpdateMsg(null);
+
+    if (editStatus === 3 && !cancelReason.trim()) {
+      setUpdateMsg({
+        type: 'error',
+        text: 'Please enter a cancellation reason. An official email with this reason will be dispatched to the patient.',
+      });
+      return;
+    }
+
+    setUpdating(true);
 
     try {
       const token = localStorage.getItem('serviceToken');
-      const updated = await updateAdminAppointmentApi(token, selectedAppt.id, {
+      const payload = {
         status: editStatus,
         admin_notes: editNotes,
-      });
+      };
 
-      setSelectedAppt(updated);
-      setUpdateMsg({ type: 'success', text: 'Appointment updated successfully!' });
+      if (editStatus === 3) {
+        payload.cancellation_reason = cancelReason.trim();
+      }
 
-      // Refresh list
-      loadAppointments();
+      const updated = await updateAdminAppointmentApi(token, selectedAppt.id, payload);
+
+      // Refresh list & automatically close edit popup on success
+      await loadAppointments();
+      setModalOpen(false);
     } catch (err) {
       setUpdateMsg({ type: 'error', text: err.message || 'Failed to update.' });
     } finally {
@@ -115,15 +136,21 @@ export default function AdminAppointmentsPage() {
     }
   };
 
-  const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to permanently delete this appointment?')) return;
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
     try {
       const token = localStorage.getItem('serviceToken');
-      await deleteAdminAppointmentApi(token, selectedAppt.id);
-      setModalOpen(false);
+      await deleteAdminAppointmentApi(token, deleteTarget.id);
+      setDeleteTarget(null);
+      if (modalOpen && selectedAppt?.id === deleteTarget.id) {
+        setModalOpen(false);
+      }
       loadAppointments();
     } catch (err) {
       alert(err.message || 'Failed to delete appointment');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -210,7 +237,7 @@ export default function AdminAppointmentsPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-cream/70 border-b border-sand/50 text-[11px] uppercase font-bold tracking-wider text-slate-500">
-                <th className="py-3.5 px-4 sm:px-6">Ref ID</th>
+                <th className="py-3.5 px-4 sm:px-6">ID</th>
                 <th className="py-3.5 px-4 sm:px-6">Patient</th>
                 <th className="py-3.5 px-4 sm:px-6">Procedure</th>
                 <th className="py-3.5 px-4 sm:px-6">Scheduled Date & Time</th>
@@ -253,7 +280,7 @@ export default function AdminAppointmentsPage() {
                       onClick={() => handleOpenModal(appt)}
                     >
                       <td className="py-4 px-4 sm:px-6 font-mono text-xs font-semibold text-accent">
-                        {appt.reference_id}
+                        {appt.id ?? appt.reference_id}
                       </td>
                       <td className="py-4 px-4 sm:px-6">
                         <div className="font-semibold text-primary">{appt.patient_name}</div>
@@ -274,14 +301,25 @@ export default function AdminAppointmentsPage() {
                           {status.label}
                         </span>
                       </td>
-                      <td className="py-4 px-4 sm:px-6 text-right" onClick={(e) => e.stopPropagation()}>
-                        <button
-                          type="button"
-                          onClick={() => handleOpenModal(appt)}
-                          className="px-3 py-1.5 rounded-lg border border-sand/70 bg-white hover:bg-slate-50 text-xs font-semibold text-primary transition-colors shadow-xs"
-                        >
-                          Manage
-                        </button>
+                      <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
+                        <div className="inline-flex items-center justify-end gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => handleOpenModal(appt)}
+                            className="p-1.5 rounded-lg text-slate-600 hover:text-accent hover:bg-accent/10 transition-colors"
+                            title="Edit Appointment"
+                          >
+                            <Edit2 size={16} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setDeleteTarget(appt)}
+                            className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors"
+                            title="Delete Appointment"
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -331,7 +369,7 @@ export default function AdminAppointmentsPage() {
                   Appointment Details
                 </span>
                 <span className="font-mono text-xs font-bold text-accent px-2.5 py-0.5 rounded-full bg-accent/10">
-                  {selectedAppt.reference_id}
+                  {selectedAppt.id ?? selectedAppt.reference_id}
                 </span>
               </div>
               <button
@@ -458,6 +496,26 @@ export default function AdminAppointmentsPage() {
                   </div>
                 </div>
 
+                {editStatus === 3 && (
+                  <div className="p-4 rounded-2xl bg-red-50/90 border border-red-200 text-xs space-y-2 animate-in fade-in">
+                    <div className="flex items-center gap-1.5 text-red-700 font-bold">
+                      <AlertCircle size={15} />
+                      <span>Reason for Cancellation (Required — will be emailed to patient)</span>
+                    </div>
+                    <p className="text-slate-600 text-[11px] leading-relaxed">
+                      Please enter the cancellation reason. This explanation will be included in the official cancellation email dispatched to <strong>{selectedAppt?.email}</strong>.
+                    </p>
+                    <textarea
+                      rows="2"
+                      required
+                      placeholder="e.g. Due to an emergency clinical procedure, Dr. Sharma is unavailable / Please select an alternate date..."
+                      value={cancelReason}
+                      onChange={(e) => setCancelReason(e.target.value)}
+                      className="w-full p-2.5 rounded-xl border border-red-300 bg-white text-xs text-primary placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400 transition-all"
+                    />
+                  </div>
+                )}
+
                 <div>
                   <label htmlFor="admin-notes" className="text-xs font-semibold uppercase tracking-wider text-primary block mb-1.5">
                     Internal Admin Notes
@@ -472,23 +530,29 @@ export default function AdminAppointmentsPage() {
                   />
                 </div>
 
-                <div className="flex items-center justify-between pt-2">
-                  <button
-                    type="button"
-                    onClick={handleDelete}
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-red-600 hover:text-red-700 py-2 px-3 rounded-xl hover:bg-red-50 transition-colors"
-                  >
-                    <Trash2 size={15} />
-                    <span>Delete Record</span>
-                  </button>
-
+                <div className="flex items-center justify-end pt-2">
                   <button
                     type="submit"
-                    disabled={updating}
-                    className="btn btn-primary px-5 py-2.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2"
+                    disabled={updating || (editStatus === 3 && !cancelReason.trim())}
+                    className={`px-5 py-2.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 transition-all cursor-pointer disabled:opacity-50 ${
+                      editStatus === 3
+                        ? 'bg-red-600 hover:bg-red-700 text-white shadow-sm'
+                        : 'btn btn-primary'
+                    }`}
                   >
-                    <Save size={15} />
-                    <span>{updating ? 'Saving...' : 'Save Changes'}</span>
+                    {updating ? (
+                      <span>Processing...</span>
+                    ) : editStatus === 3 ? (
+                      <>
+                        <XCircle size={15} />
+                        <span>Cancel Booking & Send Email</span>
+                      </>
+                    ) : (
+                      <>
+                        <Save size={15} />
+                        <span>Save Changes</span>
+                      </>
+                    )}
                   </button>
                 </div>
               </form>
@@ -496,6 +560,18 @@ export default function AdminAppointmentsPage() {
           </div>
         </div>
       )}
+
+      {/* Custom Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleConfirmDelete}
+        loading={deleting}
+        title="Delete Appointment"
+        itemName={deleteTarget ? `${deleteTarget.patient_name} (ID: ${deleteTarget.id ?? deleteTarget.reference_id})` : ''}
+        message="Are you sure you want to delete this appointment?"
+        confirmLabel="Delete Appointment"
+      />
     </div>
   );
 }

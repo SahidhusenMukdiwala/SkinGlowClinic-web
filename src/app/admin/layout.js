@@ -28,13 +28,18 @@ export default function AdminLayout({ children }) {
     const storedUser = localStorage.getItem('currentUser');
 
     if (!token) {
-      router.push('/admin/login');
+      router.push('/login?redirect=/admin/dashboard');
       return;
     }
 
     if (storedUser && !adminUser) {
       try {
-        setAdminUser(JSON.parse(storedUser));
+        const parsed = JSON.parse(storedUser);
+        if (parsed.role !== 0 && parsed.role !== 1) {
+          router.replace('/login?redirect=/admin/dashboard');
+          return;
+        }
+        setAdminUser(parsed);
       } catch {
         // ignore parse error
       }
@@ -50,6 +55,10 @@ export default function AdminLayout({ children }) {
     // Verify token with backend once
     getAdminProfileApi(token)
       .then((profile) => {
+        if (profile.role !== 0 && profile.role !== 1) {
+          router.replace('/login?redirect=/admin/dashboard');
+          return;
+        }
         setAdminUser(profile);
         localStorage.setItem('currentUser', JSON.stringify(profile));
         localStorage.setItem('role', String(profile.role));
@@ -57,7 +66,7 @@ export default function AdminLayout({ children }) {
       })
       .catch(() => {
         adminLogoutApi().finally(() => {
-          router.push('/admin/login');
+          router.push('/login?redirect=/admin/dashboard');
         });
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { Sparkles, ShieldCheck, Clock, Award } from 'lucide-react';
-import { fetchTreatments, fetchSettings } from '@/lib/api';
+import { fetchTreatments, fetchSettings, fetchCategoriesApi } from '@/lib/api';
 import BookingWizard from '@/components/booking/BookingWizard';
 
 export const metadata = {
@@ -11,10 +11,12 @@ export const metadata = {
 export const revalidate = 60;
 
 export default async function BookAppointmentPage() {
-  const [treatments, settings] = await Promise.all([
+  const [treatments, settings, categories] = await Promise.all([
     fetchTreatments(),
     fetchSettings(),
+    fetchCategoriesApi(),
   ]);
+
 
   return (
     <div className="min-h-screen bg-clinic-bg pb-20">
@@ -63,7 +65,7 @@ export default async function BookAppointmentPage() {
             </div>
           }
         >
-          <BookingWizard treatments={treatments} settings={settings} />
+          <BookingWizard treatments={treatments} settings={settings} categories={categories} />
         </Suspense>
       </main>
     </div>

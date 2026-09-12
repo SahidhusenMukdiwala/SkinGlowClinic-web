@@ -236,9 +236,28 @@ export async function fetchSettings() {
   }
 }
 
-export async function fetchTreatments(category) {
+export async function fetchTreatments(paramsOrCategory, maybeSearch) {
   try {
-    const url = category && category !== 'all' ? `treatments?category=${category}` : 'treatments';
+    let category = null;
+    let search = null;
+    if (typeof paramsOrCategory === 'object' && paramsOrCategory !== null) {
+      category = paramsOrCategory.category;
+      search = paramsOrCategory.search;
+    } else {
+      category = paramsOrCategory;
+      search = maybeSearch;
+    }
+
+    const queryParams = new URLSearchParams();
+    if (category && category !== 'all' && category !== 0 && category !== '0') {
+      queryParams.append('category', category);
+    }
+    if (search && typeof search === 'string' && search.trim()) {
+      queryParams.append('search', search.trim());
+    }
+
+    const qs = queryParams.toString();
+    const url = qs ? `treatments?${qs}` : 'treatments';
     const res = await axiosServices.get(url);
     return res.data?.data || FALLBACK_TREATMENTS;
   } catch {
@@ -337,7 +356,39 @@ export async function fetchBookedSlotsApi(date) {
   }
 }
 
-// ==============================|| AUTH & ADMIN APIS ||============================== //
+// ==============================|| AUTH & USER APIS ||============================== //
+
+export function getCurrentUser() {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function getUserRole() {
+  if (typeof window === 'undefined') return null;
+  const role = localStorage.getItem('role') || sessionStorage.getItem('role');
+  return role !== null && role !== undefined ? Number(role) : null;
+}
+
+export function isLoggedIn() {
+  if (typeof window === 'undefined') return false;
+  const token = localStorage.getItem('serviceToken') || sessionStorage.getItem('serviceToken');
+  return Boolean(token);
+}
+
+export function isAdmin() {
+  const role = getUserRole();
+  return role === 0 || role === 1;
+}
+
+export function isCustomer() {
+  const role = getUserRole();
+  return role === 2;
+}
 
 export async function adminLoginApi(credentials) {
   try {
@@ -354,6 +405,7 @@ export async function adminLoginApi(credentials) {
         localStorage.setItem('currentUser', JSON.stringify(data.user));
         localStorage.setItem('role', String(data.user.role));
       }
+      window.dispatchEvent(new CustomEvent('auth-changed', { detail: data.user }));
     }
     return data;
   } catch (err) {
@@ -361,6 +413,33 @@ export async function adminLoginApi(credentials) {
     throw new Error(msg);
   }
 }
+
+export const loginApi = adminLoginApi;
+
+export async function registerCustomerApi(userData) {
+  try {
+    const res = await axiosServices.post('auth/register', userData);
+    const data = res.data?.data;
+    if (typeof window !== 'undefined' && data) {
+      if (data.access_token) {
+        localStorage.setItem('serviceToken', data.access_token);
+      }
+      if (data.refresh_token) {
+        localStorage.setItem('refreshToken', data.refresh_token);
+      }
+      if (data.user) {
+        localStorage.setItem('currentUser', JSON.stringify(data.user));
+        localStorage.setItem('role', String(data.user.role));
+      }
+      window.dispatchEvent(new CustomEvent('auth-changed', { detail: data.user }));
+    }
+    return data;
+  } catch (err) {
+    const msg = err.response?.data?.message || err.message || 'Registration failed. Please try again.';
+    throw new Error(msg);
+  }
+}
+
 
 export async function getAdminProfileApi(token) {
   try {
@@ -812,6 +891,10 @@ export async function adminLogoutApi() {
       localStorage.removeItem('role');
       localStorage.removeItem('userId');
       sessionStorage.clear();
+      window.dispatchEvent(new CustomEvent('auth-changed', { detail: null }));
     }
   }
 }
+
+export const logoutApi = adminLogoutApi;
+

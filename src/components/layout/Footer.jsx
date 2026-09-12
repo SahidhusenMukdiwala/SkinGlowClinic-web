@@ -123,7 +123,7 @@ export default function Footer() {
           <p>© {currentYear} SkinGlow Clinic. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <Link href="/contact" className="hover:text-accent transition-colors">Inquiries</Link>
-            <Link href="/admin/login" className="hover:text-accent transition-colors">Admin Access</Link>
+            <Link href="/treatments" className="hover:text-accent transition-colors">Procedures</Link>
           </div>
         </div>
       </div>

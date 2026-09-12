@@ -28,6 +28,7 @@ import {
 } from '@/lib/api';
 import ImageUpload from '@/components/admin/ImageUpload';
 import RichTextEditor from '@/components/admin/RichTextEditor';
+import DeleteConfirmModal from '@/components/admin/DeleteConfirmModal';
 
 const CATEGORY_MAP = {
   1: { name: 'Skin', bg: 'bg-rose/20', text: 'text-rose-900', border: 'border-rose/30' },
@@ -57,6 +58,10 @@ export default function AdminTreatmentsPage() {
   const [selectedTreatment, setSelectedTreatment] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [formMsg, setFormMsg] = useState(null);
+
+  // Delete Confirmation State
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   // Form Fields
   const [formTitle, setFormTitle] = useState('');
@@ -198,16 +203,18 @@ export default function AdminTreatmentsPage() {
     }
   };
 
-  const handleDelete = async (id, title) => {
-    if (!window.confirm(`Are you sure you want to delete or deactivate "${title}"?`)) return;
-
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
     try {
       const token = localStorage.getItem('serviceToken');
-      const res = await deleteAdminTreatmentApi(token, id);
-      alert(res.message || 'Treatment status updated successfully.');
+      await deleteAdminTreatmentApi(token, deleteTarget.id);
+      setDeleteTarget(null);
       loadTreatments();
     } catch (err) {
       alert(err.message || 'Failed to delete treatment.');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -424,9 +431,9 @@ export default function AdminTreatmentsPage() {
                           </button>
                           <button
                             type="button"
-                            onClick={() => handleDelete(t.id, t.title)}
+                            onClick={() => setDeleteTarget(t)}
                             className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                            title="Delete / Deactivate"
+                            title="Delete Treatment"
                           >
                             <Trash2 size={16} />
                           </button>
@@ -666,6 +673,18 @@ export default function AdminTreatmentsPage() {
           </div>
         </div>
       )}
+
+      {/* Custom Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleConfirmDelete}
+        loading={deleting}
+        title="Delete Treatment"
+        itemName={deleteTarget?.title}
+        message="Are you sure you want to delete this treatment? It will be safely soft-deleted from the active clinic catalog and booking options."
+        confirmLabel="Delete Treatment"
+      />
     </div>
   );
 }

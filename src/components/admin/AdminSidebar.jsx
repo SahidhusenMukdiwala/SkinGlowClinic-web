@@ -70,22 +70,33 @@ export default function AdminSidebar({ mobileOpen, onClose }) {
     const Icon = item.icon;
     const isActive =
       pathname === item.href ||
-      (item.href !== '/admin/dashboard' && pathname.startsWith(item.href));
+      (item.href !== '/admin/dashboard' && pathname.startsWith(`${item.href}/`)) ||
+      (item.href !== '/admin/dashboard' && pathname === item.href);
 
     return (
       <Link
         key={item.href}
         href={item.href}
+        prefetch={true}
         onClick={() => {
           if (onClose) onClose();
         }}
-        className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all ${isActive
+        className={`group relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-150 ease-out cursor-pointer select-none ${isActive
             ? 'bg-accent text-primary font-semibold shadow-gold'
             : 'text-slate-300 hover:bg-white/10 hover:text-white'
           }`}
+        aria-current={isActive ? 'page' : undefined}
       >
-        <Icon size={18} className={isActive ? 'text-primary' : 'text-slate-400'} />
-        <span>{item.label}</span>
+        <Icon
+          size={18}
+          className={`transition-transform duration-150 group-hover:scale-110 ${
+            isActive ? 'text-primary' : 'text-slate-400 group-hover:text-white'
+          }`}
+        />
+        <span className="flex-1">{item.label}</span>
+        {isActive && (
+          <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+        )}
       </Link>
     );
   };

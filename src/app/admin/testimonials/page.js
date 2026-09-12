@@ -25,6 +25,7 @@ import {
   deleteAdminTestimonialApi,
 } from '@/lib/api';
 import ImageUpload from '@/components/admin/ImageUpload';
+import DeleteConfirmModal from '@/components/admin/DeleteConfirmModal';
 
 const DEFAULT_AVATAR = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80';
 
@@ -46,6 +47,10 @@ export default function AdminTestimonialsPage() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [formMsg, setFormMsg] = useState(null);
+
+  // Delete Confirmation State
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   // Form Fields
   const [formPatientName, setFormPatientName] = useState('');
@@ -148,15 +153,18 @@ export default function AdminTestimonialsPage() {
     }
   };
 
-  const handleDelete = async (id, name) => {
-    if (!window.confirm(`Are you sure you want to delete testimonial by "${name}"?`)) return;
-
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
     try {
       const token = localStorage.getItem('serviceToken');
-      await deleteAdminTestimonialApi(token, id);
+      await deleteAdminTestimonialApi(token, deleteTarget.id);
+      setDeleteTarget(null);
       loadTestimonials();
     } catch (err) {
       alert(err.message || 'Failed to delete testimonial.');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -346,7 +354,7 @@ export default function AdminTestimonialsPage() {
                           </button>
                           <button
                             type="button"
-                            onClick={() => handleDelete(item.id, item.patient_name)}
+                            onClick={() => setDeleteTarget(item)}
                             className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
                             title="Delete"
                           >
@@ -551,6 +559,18 @@ export default function AdminTestimonialsPage() {
           </div>
         </div>
       )}
+
+      {/* Custom Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleConfirmDelete}
+        loading={deleting}
+        title="Delete Testimonial"
+        itemName={deleteTarget?.patient_name ? `Review by ${deleteTarget.patient_name}` : ''}
+        message="Are you sure you want to delete this patient testimonial?"
+        confirmLabel="Delete Testimonial"
+      />
     </div>
   );
 }

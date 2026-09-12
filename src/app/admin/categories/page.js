@@ -22,6 +22,7 @@ import {
   deleteAdminCategoryApi,
 } from '@/lib/api';
 import { TableSkeleton } from '@/components/admin/AdminTableSkeleton';
+import DeleteConfirmModal from '@/components/admin/DeleteConfirmModal';
 
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState([]);
@@ -38,6 +39,10 @@ export default function AdminCategoriesPage() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [formMsg, setFormMsg] = useState(null);
+
+  // Delete Confirmation State
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   // Form Fields
   const [formName, setFormName] = useState('');
@@ -126,23 +131,28 @@ export default function AdminCategoriesPage() {
     }
   };
 
-  const handleDelete = async (cat) => {
+  const handleDelete = (cat) => {
     if (cat.treatmentCount > 0) {
       alert(
-        `Cannot remove "${cat.name}". It is currently assigned to ${cat.treatmentCount} treatment procedure(s). Reassign or remove them first.`
+        `Cannot remove "${cat.name}". It is currently assigned to ${cat.treatmentCount} active treatment procedure(s). Please reassign or delete them first.`
       );
       return;
     }
+    setDeleteTarget(cat);
+  };
 
-    if (!window.confirm(`Are you sure you want to delete the category "${cat.name}"?`)) return;
-
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
     try {
       const token = localStorage.getItem('serviceToken');
-      const res = await deleteAdminCategoryApi(token, cat.id);
-      alert(res.message || 'Category deleted successfully.');
+      await deleteAdminCategoryApi(token, deleteTarget.id);
+      setDeleteTarget(null);
       loadCategories();
     } catch (err) {
       alert(err.message || 'Failed to delete category.');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -405,6 +415,18 @@ export default function AdminCategoriesPage() {
           </div>
         </div>
       )}
+
+      {/* Custom Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleConfirmDelete}
+        loading={deleting}
+        title="Delete Category"
+        itemName={deleteTarget?.name}
+        message="Are you sure you want to delete this clinical category? It will be safely soft-deleted from active taxonomies."
+        confirmLabel="Delete Category"
+      />
     </div>
   );
 }
