@@ -874,6 +874,75 @@ export async function uploadImageApi(token, file, folder = 'skinglowclinic/gener
   }
 }
 
+// ==============================|| PHASE 9: CUSTOMER MANAGEMENT ||============================== //
+
+export async function fetchAdminCustomersApi(token, params = {}) {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const query = new URLSearchParams();
+    if (params.page) query.append('page', params.page);
+    if (params.limit) query.append('limit', params.limit);
+    if (params.search) query.append('search', params.search);
+    
+    // Explicitly handle status: 1 (active), 0 (inactive), or all
+    if (params.status !== undefined && params.status !== null && params.status !== '' && params.status !== 'all') {
+      const normalizedStatus = (params.status === '1' || params.status === 1 || params.status === 'active') ? '1' : '0';
+      query.append('status', normalizedStatus);
+    }
+
+    const queryString = query.toString();
+    const url = `admin/customers${queryString ? `?${queryString}` : ''}`;
+    const res = await axiosServices.get(url, config);
+    return res.data?.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || err.message || 'Failed to fetch customers.');
+  }
+}
+
+export async function fetchAdminCustomerDetailApi(token, id) {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const res = await axiosServices.get(`admin/customers/${id}`, config);
+    return res.data?.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || err.message || 'Failed to fetch customer details.');
+  }
+}
+
+export async function updateCustomerStatusApi(token, id, isActive) {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const res = await axiosServices.patch(
+      `admin/customers/${id}/status`,
+      { is_active: isActive ? 1 : 0 },
+      config
+    );
+    return res.data?.data;
+  } catch (err) {
+    const data = err.response?.data;
+    const msg = data?.errors?.[0]?.message || data?.message || err.message || 'Failed to update customer status.';
+    throw new Error(msg);
+  }
+}
+
+export async function updateAdminProfileApi(token, payload) {
+  try {
+    const isFormData = typeof FormData !== 'undefined' && payload instanceof FormData;
+    const config = {
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(isFormData ? { 'Content-Type': 'multipart/form-data' } : {}),
+      },
+    };
+    const res = await axiosServices.put('auth/profile', payload, config);
+    return res.data?.data;
+  } catch (err) {
+    const data = err.response?.data;
+    const msg = data?.errors?.[0]?.message || data?.message || err.message || 'Failed to update profile.';
+    throw new Error(msg);
+  }
+}
+
 export async function adminLogoutApi() {
   try {
     const refreshToken =

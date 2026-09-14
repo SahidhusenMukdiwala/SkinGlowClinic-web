@@ -136,16 +136,6 @@ export default function AdminInquiriesPage() {
             Review general messages, treatment questions, and consultation requests. Total: {totalCount}
           </p>
         </div>
-
-        <button
-          type="button"
-          onClick={loadInquiries}
-          disabled={loading}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-sand/70 bg-white hover:bg-slate-50 text-slate-700 text-sm font-semibold shadow-sm transition-colors self-start sm:self-auto"
-        >
-          <RefreshCw size={15} className={loading ? 'animate-spin text-accent' : ''} />
-          <span>Refresh</span>
-        </button>
       </div>
 
       {/* Filter & Search Bar */}

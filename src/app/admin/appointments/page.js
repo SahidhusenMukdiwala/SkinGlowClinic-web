@@ -166,16 +166,6 @@ export default function AdminAppointmentsPage() {
             Review, confirm, reschedule, or cancel patient clinical bookings. Total: {totalCount}
           </p>
         </div>
-
-        <button
-          type="button"
-          onClick={loadAppointments}
-          disabled={loading}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-sand/70 bg-white hover:bg-slate-50 text-slate-700 text-sm font-semibold shadow-sm transition-colors self-start sm:self-auto"
-        >
-          <RefreshCw size={15} className={loading ? 'animate-spin text-accent' : ''} />
-          <span>Refresh List</span>
-        </button>
       </div>
 
       {/* Filter & Search Bar */}
@@ -196,30 +186,22 @@ export default function AdminAppointmentsPage() {
             />
           </div>
 
-          {/* Status Tabs */}
-          <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0">
-            {[
-              { id: 'all', label: 'All' },
-              { id: '0', label: 'Pending' },
-              { id: '1', label: 'Confirmed' },
-              { id: '2', label: 'Completed' },
-              { id: '3', label: 'Cancelled' },
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => {
-                  setStatusFilter(tab.id);
-                  setCurrentPage(1);
-                }}
-                className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${statusFilter === tab.id
-                    ? 'bg-primary text-white shadow-sm'
-                    : 'bg-cream/60 hover:bg-cream text-slate-600 border border-sand/40'
-                  }`}
-              >
-                {tab.label}
-              </button>
-            ))}
+          {/* Status Select Box */}
+          <div className="w-full md:w-48 shrink-0">
+            <select
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="w-full px-3.5 py-2.5 rounded-xl border border-sand/70 bg-white text-sm text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition cursor-pointer"
+            >
+              <option value="all">All Statuses</option>
+              <option value="0">Pending</option>
+              <option value="1">Confirmed</option>
+              <option value="2">Completed</option>
+              <option value="3">Cancelled</option>
+            </select>
           </div>
         </div>
       </div>

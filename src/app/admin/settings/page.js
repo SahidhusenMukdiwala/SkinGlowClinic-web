@@ -17,8 +17,15 @@ import {
   AlertCircle,
   ExternalLink,
   MessageCircle,
+  Camera,
+  Trash2,
 } from 'lucide-react';
-import { fetchAdminSettingsApi, updateAdminSettingsApi } from '@/lib/api';
+import {
+  fetchAdminSettingsApi,
+  updateAdminSettingsApi,
+  uploadImageApi,
+  updateAdminProfileApi,
+} from '@/lib/api';
 
 const InstagramIcon = ({ size = 17, className = '' }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -53,6 +60,7 @@ export default function AdminSettingsPage() {
   const [settingsMap, setSettingsMap] = useState({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [statusMsg, setStatusMsg] = useState(null);
 
   const loadSettings = useCallback(async () => {
@@ -80,6 +88,75 @@ export default function AdminSettingsPage() {
       ...prev,
       [key]: value,
     }));
+  };
+
+  const handleProfileImageChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!['image/jpeg', 'image/png', 'image/webp', 'image/jpg'].includes(file.type)) {
+      setStatusMsg({ type: 'error', text: 'Please upload a valid JPG, PNG, or WEBP image.' });
+      return;
+    }
+
+    if (file.size > 3 * 1024 * 1024) {
+      setStatusMsg({ type: 'error', text: 'Image size exceeds 3MB limit.' });
+      return;
+    }
+
+    setUploadingPhoto(true);
+    setStatusMsg(null);
+    try {
+      const token = localStorage.getItem('serviceToken');
+      const uploadRes = await uploadImageApi(token, file, 'skinglowclinic/profiles');
+      const photoUrl = uploadRes.url;
+
+      await updateAdminProfileApi(token, { profile_image: photoUrl });
+
+      handleChange('doctor_image', photoUrl);
+      handleChange('doctor_profile_image', photoUrl);
+
+      const stored = localStorage.getItem('currentUser');
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          parsed.profile_image = photoUrl;
+          localStorage.setItem('currentUser', JSON.stringify(parsed));
+          window.dispatchEvent(new CustomEvent('auth-changed', { detail: parsed }));
+        } catch {}
+      }
+
+      setStatusMsg({ type: 'success', text: 'Doctor portrait photo uploaded successfully!' });
+    } catch (err) {
+      setStatusMsg({ type: 'error', text: err.message || 'Failed to upload photo.' });
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
+  const handleRemoveProfileImage = async () => {
+    setUploadingPhoto(true);
+    try {
+      const token = localStorage.getItem('serviceToken');
+      await updateAdminProfileApi(token, { profile_image: '' });
+      handleChange('doctor_image', '');
+      handleChange('doctor_profile_image', '');
+
+      const stored = localStorage.getItem('currentUser');
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          parsed.profile_image = null;
+          localStorage.setItem('currentUser', JSON.stringify(parsed));
+          window.dispatchEvent(new CustomEvent('auth-changed', { detail: parsed }));
+        } catch {}
+      }
+      setStatusMsg({ type: 'success', text: 'Profile photo removed.' });
+    } catch (err) {
+      setStatusMsg({ type: 'error', text: err.message || 'Failed to remove photo.' });
+    } finally {
+      setUploadingPhoto(false);
+    }
   };
 
   const handleSave = async (e) => {
@@ -113,16 +190,6 @@ export default function AdminSettingsPage() {
         </div>
 
         <div className="flex items-center gap-3 self-start sm:self-auto">
-          <button
-            type="button"
-            onClick={loadSettings}
-            disabled={loading || saving}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-sand bg-white hover:bg-slate-50 text-slate-700 text-sm font-semibold shadow-xs transition-colors"
-          >
-            <RefreshCw size={15} className={loading ? 'animate-spin text-accent' : ''} />
-            <span>Reload</span>
-          </button>
-
           <button
             type="button"
             onClick={handleSave}
@@ -180,6 +247,64 @@ export default function AdminSettingsPage() {
             <div className="border-b border-sand/60 pb-4">
               <h3 className="font-serif text-lg font-bold text-primary">Clinic Branding & Leadership</h3>
               <p className="text-xs text-slate-500">General clinic identity and lead physician information</p>
+            </div>
+
+            {/* Doctor Profile Photo Uploader */}
+            <div className="p-5 rounded-2xl bg-[#FAF8F5] border border-sand/80">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-5">
+                <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-white border-2 border-accent/40 shadow-sm shrink-0 flex items-center justify-center">
+                  {settingsMap.doctor_image || settingsMap.doctor_profile_image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={settingsMap.doctor_image || settingsMap.doctor_profile_image}
+                      alt="Doctor Profile"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <User size={36} className="text-slate-300" />
+                  )}
+                  {uploadingPhoto && (
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                      <RefreshCw size={20} className="text-white animate-spin" />
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex-1 space-y-1.5">
+                  <h4 className="font-serif text-sm font-bold text-primary">
+                    Doctor / Administrator Portrait Photo
+                  </h4>
+                  <p className="text-xs text-slate-500">
+                    This official photo appears in the <strong>About Section</strong> on the public website and the Homepage. Recommended size: 500×500px (JPG, PNG, or WEBP, max 3MB).
+                  </p>
+
+                  <div className="flex items-center gap-3 pt-2">
+                    <label className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-primary text-white text-xs font-semibold hover:bg-primary-light transition cursor-pointer shadow-xs">
+                      <Camera size={14} />
+                      <span>{uploadingPhoto ? 'Uploading...' : 'Upload Photo'}</span>
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/jpg"
+                        className="hidden"
+                        onChange={handleProfileImageChange}
+                        disabled={uploadingPhoto}
+                      />
+                    </label>
+
+                    {(settingsMap.doctor_image || settingsMap.doctor_profile_image) && (
+                      <button
+                        type="button"
+                        onClick={handleRemoveProfileImage}
+                        disabled={uploadingPhoto}
+                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 text-xs font-semibold transition"
+                      >
+                        <Trash2 size={13} />
+                        <span>Remove</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">

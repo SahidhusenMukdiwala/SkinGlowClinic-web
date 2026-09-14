@@ -6,7 +6,6 @@ import {
   Plus,
   Edit2,
   Trash2,
-  RefreshCw,
   Tags,
   Sparkles,
   X,
@@ -170,16 +169,6 @@ export default function AdminCategoriesPage() {
         </div>
 
         <div className="flex items-center gap-3 self-start sm:self-auto">
-          <button
-            type="button"
-            onClick={loadCategories}
-            disabled={loading}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-sand bg-white hover:bg-slate-50 text-slate-700 text-sm font-semibold shadow-xs transition-colors"
-          >
-            <RefreshCw size={15} className={loading ? 'animate-spin text-accent' : ''} />
-            <span className="hidden sm:inline">Refresh</span>
-          </button>
-
           <button
             type="button"
             onClick={handleOpenCreate}

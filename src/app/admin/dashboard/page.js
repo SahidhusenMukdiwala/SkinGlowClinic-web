@@ -10,7 +10,6 @@ import {
   AlertCircle,
   ArrowUpRight,
   Sparkles,
-  RefreshCw,
   Phone,
   Mail,
   CheckCircle2,
@@ -74,16 +73,6 @@ export default function AdminDashboardPage() {
             Real-time consultation bookings, patient inquiries, and daily clinic activity.
           </p>
         </div>
-
-        <button
-          type="button"
-          onClick={loadStats}
-          disabled={loading}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-sand/70 bg-white hover:bg-slate-50 text-slate-700 text-sm font-semibold shadow-sm transition-colors self-start sm:self-auto"
-        >
-          <RefreshCw size={15} className={loading ? 'animate-spin text-accent' : ''} />
-          <span>Refresh</span>
-        </button>
       </div>
 
       {error && (
@@ -170,140 +159,180 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* Two-Column Recent Activity Section */}
+      {/* Two-Column Activity Section: Pending Appointments & Unread Inquiries */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Recent Appointments */}
-        <div className="p-6 rounded-2xl bg-white border border-sand/60 shadow-sm">
-          <div className="flex items-center justify-between mb-6 pb-4 border-b border-sand/40">
-            <div>
-              <h3 className="font-serif text-lg font-bold text-primary">Recent Appointments</h3>
-              <p className="text-xs text-slate-500">Latest online bookings received</p>
-            </div>
-            <Link
-              href="/admin/appointments"
-              className="inline-flex items-center gap-1 text-xs font-semibold text-accent hover:text-primary transition-colors"
-            >
-              <span>View All</span>
-              <ChevronRight size={14} />
-            </Link>
-          </div>
-
-          <div className="space-y-3">
-            {loading ? (
-              <p className="text-xs text-slate-400 py-4 text-center">Loading appointments...</p>
-            ) : !stats?.recentAppointments || stats.recentAppointments.length === 0 ? (
-              <p className="text-xs text-slate-400 py-6 text-center">No appointments found.</p>
-            ) : (
-              stats.recentAppointments.map((appt) => {
-                const status = STATUS_CONFIG[appt.status] || STATUS_CONFIG[0];
-                const dateObj = new Date(appt.preferred_date_time);
-                const dateFormatted = !isNaN(dateObj.getTime())
-                  ? dateObj.toLocaleDateString('en-IN', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })
-                  : 'Pending Date';
-
-                return (
-                  <div
-                    key={appt.id}
-                    className="p-4 rounded-xl bg-cream/40 border border-sand/50 hover:border-accent/40 transition-all flex items-center justify-between gap-4"
-                  >
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold text-sm text-primary truncate">
-                          {appt.patient_name}
-                        </span>
-                        <span className="text-[10px] font-mono text-slate-400">
-                          #SG-{String(appt.id).padStart(5, '0')}
-                        </span>
-                      </div>
-                      <p className="text-xs text-accent font-medium truncate mt-0.5">
-                        {appt.treatment?.title || 'General Consultation'}
-                      </p>
-                      <p className="text-[11px] text-slate-400 mt-0.5">{dateFormatted}</p>
-                    </div>
-
-                    <span
-                      className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border shrink-0 ${status.bg} ${status.text} ${status.border}`}
-                    >
-                      {status.label}
+        {/* Pending Appointments Panel */}
+        <div className="p-6 rounded-2xl bg-white border border-sand/60 shadow-sm flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-sand/40">
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-serif text-lg font-bold text-primary">Pending Appointments</h3>
+                  {kpis.pendingAppointments > 0 && (
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 font-mono">
+                      {kpis.pendingAppointments} new
                     </span>
+                  )}
+                </div>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Awaiting clinic staff review & confirmation
+                </p>
+              </div>
+
+              <Link
+                href="/admin/appointments"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-accent hover:text-primary transition-colors"
+              >
+                <span>View All</span>
+                <ChevronRight size={14} />
+              </Link>
+            </div>
+
+            <div className="space-y-3">
+              {loading ? (
+                <p className="text-xs text-slate-400 py-8 text-center">Loading pending appointments...</p>
+              ) : !stats?.pendingAppointments || stats.pendingAppointments.length === 0 ? (
+                <div className="py-12 text-center">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-2.5">
+                    <CheckCircle2 size={24} />
                   </div>
-                );
-              })
-            )}
+                  <h4 className="text-sm font-semibold text-slate-800">All Appointments Reviewed</h4>
+                  <p className="text-xs text-slate-400 max-w-xs mx-auto mt-1">
+                    There are no pending consultation requests awaiting confirmation.
+                  </p>
+                </div>
+              ) : (
+                stats.pendingAppointments.map((appt) => {
+                  const status = STATUS_CONFIG[appt.status] || STATUS_CONFIG[0];
+                  const dateObj = new Date(appt.preferred_date_time);
+                  const dateFormatted = !isNaN(dateObj.getTime())
+                    ? dateObj.toLocaleDateString('en-IN', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })
+                    : 'Pending Date';
+
+                  return (
+                    <Link
+                      key={appt.id}
+                      href="/admin/appointments"
+                      className="p-4 rounded-xl bg-cream/40 border border-sand/50 hover:border-accent/40 hover:bg-cream/60 transition-all flex items-center justify-between gap-4 block"
+                    >
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-sm text-primary truncate">
+                            {appt.patient_name}
+                          </span>
+                          <span className="text-[10px] font-mono text-slate-400">
+                            #SG-{String(appt.id).padStart(5, '0')}
+                          </span>
+                        </div>
+                        <p className="text-xs text-accent font-medium truncate mt-0.5">
+                          {appt.treatment?.title || 'General Consultation'}
+                        </p>
+                        <p className="text-[11px] text-slate-400 mt-0.5">{dateFormatted}</p>
+                      </div>
+
+                      <span
+                        className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border shrink-0 ${status.bg} ${status.text} ${status.border}`}
+                      >
+                        {status.label}
+                      </span>
+                    </Link>
+                  );
+                })
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Recent Inquiries */}
-        <div className="p-6 rounded-2xl bg-white border border-sand/60 shadow-sm">
-          <div className="flex items-center justify-between mb-6 pb-4 border-b border-sand/40">
-            <div>
-              <h3 className="font-serif text-lg font-bold text-primary">Recent Patient Inquiries</h3>
-              <p className="text-xs text-slate-500">Latest messages from contact form</p>
+        {/* Unread Inquiries Panel */}
+        <div className="p-6 rounded-2xl bg-white border border-sand/60 shadow-sm flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-sand/40">
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-serif text-lg font-bold text-primary">Unread Inquiries</h3>
+                  {kpis.unreadInquiries > 0 && (
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose/15 text-rose font-mono">
+                      {kpis.unreadInquiries} unread
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Patient messages awaiting review & response
+                </p>
+              </div>
+
+              <Link
+                href="/admin/inquiries"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-accent hover:text-primary transition-colors"
+              >
+                <span>View All</span>
+                <ChevronRight size={14} />
+              </Link>
             </div>
-            <Link
-              href="/admin/inquiries"
-              className="inline-flex items-center gap-1 text-xs font-semibold text-accent hover:text-primary transition-colors"
-            >
-              <span>View All</span>
-              <ChevronRight size={14} />
-            </Link>
-          </div>
 
-          <div className="space-y-3">
-            {loading ? (
-              <p className="text-xs text-slate-400 py-4 text-center">Loading inquiries...</p>
-            ) : !stats?.recentInquiries || stats.recentInquiries.length === 0 ? (
-              <p className="text-xs text-slate-400 py-6 text-center">No inquiries found.</p>
-            ) : (
-              stats.recentInquiries.map((inq) => {
-                const dateObj = new Date(inq.createdAt);
-                const timeAgo = !isNaN(dateObj.getTime())
-                  ? dateObj.toLocaleDateString('en-IN', {
-                      month: 'short',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })
-                  : '';
+            <div className="space-y-3">
+              {loading ? (
+                <p className="text-xs text-slate-400 py-8 text-center">Loading unread inquiries...</p>
+              ) : !stats?.unreadInquiries || stats.unreadInquiries.length === 0 ? (
+                <div className="py-12 text-center">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-2.5">
+                    <CheckCircle2 size={24} />
+                  </div>
+                  <h4 className="text-sm font-semibold text-slate-800">Inbox Zero</h4>
+                  <p className="text-xs text-slate-400 max-w-xs mx-auto mt-1">
+                    All patient inquiries from the website contact form have been attended to.
+                  </p>
+                </div>
+              ) : (
+                stats.unreadInquiries.map((inq) => {
+                  const dateObj = new Date(inq.createdAt);
+                  const timeAgo = !isNaN(dateObj.getTime())
+                    ? dateObj.toLocaleDateString('en-IN', {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })
+                    : '';
 
-                return (
-                  <div
-                    key={inq.id}
-                    className="p-4 rounded-xl bg-cream/40 border border-sand/50 hover:border-accent/40 transition-all flex items-start justify-between gap-4"
-                  >
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2">
-                        {inq.is_read === 0 && (
+                  return (
+                    <Link
+                      key={inq.id}
+                      href="/admin/inquiries"
+                      className="p-4 rounded-xl bg-cream/40 border border-sand/50 hover:border-accent/40 hover:bg-cream/60 transition-all flex items-start justify-between gap-4 block"
+                    >
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
                           <span
                             className="w-2 h-2 rounded-full bg-accent shrink-0"
                             title="Unread"
                           />
-                        )}
-                        <span className="font-semibold text-sm text-primary truncate">
-                          {inq.name}
-                        </span>
+                          <span className="font-semibold text-sm text-primary truncate">
+                            {inq.name}
+                          </span>
+                        </div>
+                        <p className="text-xs font-medium text-slate-700 truncate mt-0.5">
+                          {inq.subject}
+                        </p>
+                        <p className="text-[11px] text-slate-400 line-clamp-1 mt-0.5">
+                          {inq.message}
+                        </p>
                       </div>
-                      <p className="text-xs font-medium text-slate-700 truncate mt-0.5">
-                        {inq.subject}
-                      </p>
-                      <p className="text-[11px] text-slate-400 line-clamp-1 mt-0.5">
-                        {inq.message}
-                      </p>
-                    </div>
 
-                    <span className="text-[10px] text-slate-400 shrink-0 whitespace-nowrap">
-                      {timeAgo}
-                    </span>
-                  </div>
-                );
-              })
-            )}
+                      <span className="text-[10px] text-slate-400 shrink-0 whitespace-nowrap">
+                        {timeAgo}
+                      </span>
+                    </Link>
+                  );
+                })
+              )}
+            </div>
           </div>
         </div>
       </div>

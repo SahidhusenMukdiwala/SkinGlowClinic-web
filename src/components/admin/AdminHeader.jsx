@@ -24,9 +24,18 @@ export default function AdminHeader({ adminUser, onToggleSidebar, onLogout, titl
       <div className="flex items-center gap-3">
         {adminUser && (
           <div className="hidden sm:flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-cream border border-sand">
-            <div className="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold">
-              {adminUser.full_name ? adminUser.full_name.charAt(0) : 'A'}
-            </div>
+            {adminUser.profile_image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={adminUser.profile_image}
+                alt={adminUser.full_name || 'Admin'}
+                className="w-7 h-7 rounded-full object-cover border border-accent/40 shrink-0"
+              />
+            ) : (
+              <div className="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold shrink-0">
+                {adminUser.full_name ? adminUser.full_name.charAt(0) : 'A'}
+              </div>
+            )}
             <div className="text-left">
               <span className="block text-xs font-semibold text-primary leading-tight">
                 {adminUser.full_name}

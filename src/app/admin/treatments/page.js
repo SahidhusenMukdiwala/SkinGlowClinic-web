@@ -247,16 +247,6 @@ export default function AdminTreatmentsPage() {
         <div className="flex items-center gap-3 self-start sm:self-auto">
           <button
             type="button"
-            onClick={loadTreatments}
-            disabled={loading}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-sand bg-white hover:bg-slate-50 text-slate-700 text-sm font-semibold shadow-xs transition-colors"
-          >
-            <RefreshCw size={15} className={loading ? 'animate-spin text-accent' : ''} />
-            <span className="hidden sm:inline">Refresh</span>
-          </button>
-
-          <button
-            type="button"
             onClick={handleOpenCreate}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent to-accent-soft text-primary text-sm font-bold shadow-gold hover:shadow-lg transition-all"
           >

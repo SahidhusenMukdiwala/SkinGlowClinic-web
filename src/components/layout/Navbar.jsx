@@ -12,7 +12,8 @@ import {
   LogOut, 
   LayoutDashboard, 
   ChevronDown,
-  ShieldCheck
+  ShieldCheck,
+  Loader2
 } from 'lucide-react';
 import { getCurrentUser, logoutApi } from '@/lib/api';
 
@@ -66,12 +67,25 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleLogout = async () => {
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  const handleLogoutClick = () => {
     setUserDropdownOpen(false);
     setMobileMenuOpen(false);
-    await logoutApi();
-    setCurrentUser(null);
-    router.push('/');
+    setShowLogoutModal(true);
+  };
+
+  const handleConfirmLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await logoutApi();
+    } finally {
+      setCurrentUser(null);
+      setLoggingOut(false);
+      setShowLogoutModal(false);
+      router.push('/');
+    }
   };
 
   const toggleMobileMenu = () => {
@@ -191,8 +205,8 @@ export default function Navbar() {
                   <div className="border-t border-sand/40 pt-1">
                     <button
                       type="button"
-                      onClick={handleLogout}
-                      className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-red-600 hover:bg-red-50 transition-colors"
+                      onClick={handleLogoutClick}
+                      className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
                     >
                       <LogOut size={15} />
                       <span>Sign Out</span>
@@ -211,50 +225,36 @@ export default function Navbar() {
             </Link>
           )}
 
-          {/* Mobile Menu Toggle Button */}
-          <button 
-            type="button" 
-            className="md:hidden p-2 rounded-lg text-primary hover:bg-clinic-bg-alt transition-colors"
-            onClick={toggleMobileMenu}
-            aria-label="Toggle Navigation Menu"
-          >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Mobile Menu Button */}
+          <div className="md:hidden flex items-center gap-2">
+            <button
+              type="button"
+              onClick={toggleMobileMenu}
+              className="p-2 rounded-lg text-primary hover:bg-sand/30 transition-colors"
+              aria-label="Toggle Navigation Menu"
+            >
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile Navigation Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden flex flex-col gap-2.5 px-6 py-5 bg-[#FDFBF7] border-b border-primary/10 shadow-lg animate-fadeIn">
-          {currentUser && (
-            <div className="p-3 mb-2 rounded-xl bg-sand/20 border border-sand/40 flex items-center justify-between">
-              <div>
-                <p className="text-xs font-bold text-primary">{currentUser.full_name}</p>
-                <p className="text-[11px] text-slate-500">{currentUser.email}</p>
-              </div>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-accent/20 text-primary">
-                {isAdminUser ? 'Admin' : 'Patient'}
-              </span>
-            </div>
-          )}
-
-          <div className="flex flex-col gap-1 my-1">
+        <div className="md:hidden bg-cream/98 backdrop-blur-xl border-t border-sand/40 px-6 py-6 flex flex-col gap-4 animate-in slide-in-from-top-4 duration-200">
+          <div className="flex flex-col gap-2">
             {NAV_LINKS.map((link) => {
               const active = isLinkActive(link.href);
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  prefetch={true}
-                  onClick={closeMobileMenu}
-                  className={`py-2.5 px-3.5 rounded-xl text-sm font-medium transition-all duration-150 flex items-center justify-between ${
-                    active
-                      ? 'bg-primary text-accent font-semibold shadow-xs'
-                      : 'text-clinic-text hover:text-accent hover:bg-sand/20'
+                  className={`py-2 text-base font-medium transition-colors ${
+                    active ? 'text-accent font-bold' : 'text-slate-700 hover:text-accent'
                   }`}
+                  onClick={closeMobileMenu}
                 >
-                  <span>{link.label}</span>
-                  {active && <span className="w-1.5 h-1.5 rounded-full bg-accent" />}
+                  {link.label}
                 </Link>
               );
             })}
@@ -275,8 +275,8 @@ export default function Navbar() {
           {currentUser ? (
             <button
               type="button"
-              onClick={handleLogout}
-              className="mt-2 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 rounded-xl transition-colors text-center"
+              onClick={handleLogoutClick}
+              className="mt-2 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 rounded-xl transition-colors text-center cursor-pointer"
             >
               Sign Out
             </button>
@@ -292,7 +292,55 @@ export default function Navbar() {
           )}
         </div>
       )}
+
+      {/* Sign Out Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl border border-slate-100 space-y-4 animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto">
+              <LogOut size={24} />
+            </div>
+
+            <div className="text-center">
+              <h3 className="text-lg font-serif font-bold text-primary">
+                Sign Out Confirmation
+              </h3>
+              <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                Are you sure you want to sign out of your account?
+              </p>
+            </div>
+
+            <div className="flex items-center justify-end gap-2.5 pt-2">
+              <button
+                type="button"
+                disabled={loggingOut}
+                onClick={() => setShowLogoutModal(false)}
+                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={loggingOut}
+                onClick={handleConfirmLogout}
+                className="px-4 py-2 text-xs font-semibold text-white bg-red-600 hover:bg-red-700 rounded-xl transition shadow-sm flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
+              >
+                {loggingOut ? (
+                  <>
+                    <Loader2 size={14} className="animate-spin" />
+                    <span>Signing Out...</span>
+                  </>
+                ) : (
+                  <>
+                    <LogOut size={14} />
+                    <span>Okay, Sign Out</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
-

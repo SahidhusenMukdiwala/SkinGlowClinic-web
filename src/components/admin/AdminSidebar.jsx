@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   CalendarCheck,
   Inbox,
+  Users,
   Sparkles,
   ExternalLink,
   X,
@@ -27,6 +28,11 @@ const OPERATIONS_NAV = [
     label: 'Appointments',
     href: '/admin/appointments',
     icon: CalendarCheck,
+  },
+  {
+    label: 'Customers',
+    href: '/admin/customers',
+    icon: Users,
   },
   {
     label: 'Inquiries',
