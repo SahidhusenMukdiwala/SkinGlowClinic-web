@@ -27,8 +27,17 @@ import {
   fetchCategoriesApi,
 } from '@/lib/api';
 import ImageUpload from '@/components/admin/ImageUpload';
-import RichTextEditor from '@/components/admin/RichTextEditor';
 import DeleteConfirmModal from '@/components/admin/DeleteConfirmModal';
+import dynamic from 'next/dynamic';
+
+const RichTextEditor = dynamic(() => import('@/components/admin/RichTextEditor'), {
+  ssr: false,
+  loading: () => (
+    <div className="h-64 rounded-xl border border-sand/40 bg-slate-50 flex items-center justify-center text-slate-400 text-sm animate-pulse">
+      Loading editor...
+    </div>
+  ),
+});
 
 const CATEGORY_MAP = {
   1: { name: 'Skin', bg: 'bg-rose/20', text: 'text-rose-900', border: 'border-rose/30' },

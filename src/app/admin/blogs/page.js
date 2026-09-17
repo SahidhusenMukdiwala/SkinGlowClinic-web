@@ -25,8 +25,17 @@ import {
   deleteAdminBlogApi,
 } from '@/lib/api';
 import ImageUpload from '@/components/admin/ImageUpload';
-import RichTextEditor from '@/components/admin/RichTextEditor';
 import DeleteConfirmModal from '@/components/admin/DeleteConfirmModal';
+import dynamic from 'next/dynamic';
+
+const RichTextEditor = dynamic(() => import('@/components/admin/RichTextEditor'), {
+  ssr: false,
+  loading: () => (
+    <div className="h-64 rounded-xl border border-sand/40 bg-slate-50 flex items-center justify-center text-slate-400 text-sm animate-pulse">
+      Loading editor...
+    </div>
+  ),
+});
 
 const DEFAULT_COVER = 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=1200&q=80';
 

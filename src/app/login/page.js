@@ -313,7 +313,7 @@ function LoginFormContent() {
                   id="reg-name"
                   type="text"
                   required
-                  placeholder="e.g. Dr. Priya Patel"
+                  placeholder="Enter your full name"
                   value={regFullName}
                   onChange={(e) => setRegFullName(e.target.value)}
                   className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-sand/70 bg-cream/30 text-sm text-primary placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-all"
@@ -446,7 +446,7 @@ function LoginFormContent() {
                 </>
               ) : (
                 <>
-                  <span>Create Patient Account</span>
+                  <span>Sign Up</span>
                   <ArrowRight size={16} />
                 </>
               )}

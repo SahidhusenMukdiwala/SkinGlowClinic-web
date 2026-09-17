@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import axiosServices from './axios';
 import { CLINIC_DEFAULTS } from './constants';
 
@@ -227,14 +228,16 @@ const FALLBACK_BLOGS = [
 
 // ==============================|| PUBLIC APIS ||============================== //
 
-export async function fetchSettings() {
+// Per-request deduplication via React.cache ensures generateMetadata() and the
+// page component share a single request, with 0s TTL so admin updates propagate instantly.
+export const fetchSettings = cache(async () => {
   try {
     const res = await axiosServices.get('settings');
     return { ...CLINIC_DEFAULTS, ...(res.data?.data?.map || {}) };
   } catch {
     return CLINIC_DEFAULTS;
   }
-}
+});
 
 export async function fetchTreatments(paramsOrCategory, maybeSearch) {
   try {

@@ -12,11 +12,30 @@ import {
   PhoneCall,
   HeartHandshake,
 } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import { fetchSettings, fetchTreatments, fetchTestimonials } from '@/lib/api';
 import SectionHeader from '@/components/common/SectionHeader';
 import HomeServicesTabs from '@/components/home/HomeServicesTabs';
-import HomeTestimonials from '@/components/home/HomeTestimonials';
-import HomeFAQ from '@/components/home/HomeFAQ';
+
+const HomeTestimonials = dynamic(() => import('@/components/home/HomeTestimonials'), {
+  loading: () => (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-pulse">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <div key={i} className="h-64 rounded-2xl bg-white border border-clinic-border-subtle p-6" />
+      ))}
+    </div>
+  ),
+});
+
+const HomeFAQ = dynamic(() => import('@/components/home/HomeFAQ'), {
+  loading: () => (
+    <div className="max-w-3xl mx-auto space-y-4 animate-pulse">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div key={i} className="h-16 rounded-xl bg-slate-100" />
+      ))}
+    </div>
+  ),
+});
 
 export const revalidate = 60;
 

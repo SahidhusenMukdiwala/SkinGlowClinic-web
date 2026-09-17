@@ -112,7 +112,7 @@ export default function ContactForm() {
               name="name"
               type="text"
               required
-              placeholder="e.g. Dr. Priya Rao"
+              placeholder="Enter your full name"
               value={formData.name}
               onChange={handleChange}
               className="w-full px-4 py-2.5 rounded-xl bg-clinic-bg border border-clinic-border-subtle focus:border-accent focus:outline-none text-sm text-clinic-text transition-colors"
