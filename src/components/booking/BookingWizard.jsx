@@ -32,6 +32,7 @@ import {
   registerCustomerApi, 
   getCurrentUser 
 } from '@/lib/api';
+import { useSettings } from '@/context/SettingsContext';
 
 const TIME_SLOTS = {
   morning: ['10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM'],
@@ -39,6 +40,8 @@ const TIME_SLOTS = {
 };
 
 export default function BookingWizard({ treatments = [], settings = {}, categories = [] }) {
+  const { settings: liveSettings } = useSettings();
+  const activeSettings = { ...settings, ...liveSettings };
   const searchParams = useSearchParams();
   const preselectedSlug = searchParams.get('treatment');
 
@@ -456,15 +459,20 @@ export default function BookingWizard({ treatments = [], settings = {}, categori
 
   const getGoogleCalendarUrl = () => {
     if (!bookingConfirmation || !selectedDate || !selectedTime) return '#';
-    const title = encodeURIComponent(`Appointment: ${selectedTreatment?.title} at SkinGlow Clinic`);
+    const clinicName = activeSettings?.clinic_name || 'SkinGlow Clinic';
+    const doctorTitle = activeSettings?.doctor_name
+      ? `${activeSettings.doctor_name}${activeSettings.doctor_qualifications ? `, ${activeSettings.doctor_qualifications}` : ''}`
+      : 'Lead Specialist';
+
+    const title = encodeURIComponent(`Appointment: ${selectedTreatment?.title} at ${clinicName}`);
     const details = encodeURIComponent(
-      `SkinGlow Clinic Consultation & Procedure: ${selectedTreatment?.title}\n` +
-      `Doctor: Dr. Aisha Sharma, MD\n` +
+      `${clinicName} Consultation & Procedure: ${selectedTreatment?.title}\n` +
+      `Doctor: ${doctorTitle}\n` +
       `Reference ID: ${bookingConfirmation.reference_id || 'SG-APPT'}\n` +
-      `Address: ${settings.address || 'Radiant Medical Enclave, Linking Road, Bandra West, Mumbai'}\n` +
-      `Phone: ${settings.phone || '+91 98201 23456'}`
+      `Address: ${activeSettings?.address || 'Radiant Medical Enclave, Linking Road, Bandra West, Mumbai'}\n` +
+      `Phone: ${activeSettings?.phone || '+91 98201 23456'}`
     );
-    const location = encodeURIComponent(settings.address || 'SkinGlow Clinic, Bandra West, Mumbai');
+    const location = encodeURIComponent(activeSettings?.address || `${clinicName}, Bandra West, Mumbai`);
     return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}`;
   };
 
@@ -635,9 +643,22 @@ export default function BookingWizard({ treatments = [], settings = {}, categori
                         <h4 className="font-heading text-base font-bold text-primary mb-2 line-clamp-1">{item.title}</h4>
                         <p className="text-xs sm:text-sm text-clinic-muted leading-relaxed line-clamp-2 mb-4">{item.short_description}</p>
                       </div>
-                      <div className="flex items-center gap-3 text-xs text-clinic-muted pt-3 border-t border-dashed border-clinic-border-subtle mt-auto">
-                        <span className="inline-flex items-center gap-1"><Clock size={13} /> {item.duration || '45 mins'}</span>
-                        <span className="inline-flex items-center gap-1"><Sparkles size={13} /> MD Supervised</span>
+                      <div className="flex items-center justify-between text-xs text-clinic-muted pt-3 border-t border-dashed border-clinic-border-subtle mt-auto gap-2">
+                        <div className="flex items-center gap-2.5">
+                          <span className="inline-flex items-center gap-1"><Clock size={13} /> {item.duration || '45 mins'}</span>
+                          <span className="hidden sm:inline-flex items-center gap-1"><Sparkles size={13} /> MD Supervised</span>
+                        </div>
+                        <div className="shrink-0">
+                          {item.price && Number(item.price) > 0 ? (
+                            <span className="font-bold text-primary font-mono text-xs bg-accent/15 px-2.5 py-0.5 rounded-full border border-accent/30">
+                              ₹{Number(item.price).toLocaleString('en-IN')}
+                            </span>
+                          ) : (
+                            <span className="text-[11px] font-semibold text-accent-hover bg-sand/40 px-2 py-0.5 rounded-full">
+                              Consultation Included
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   );
@@ -678,7 +699,7 @@ export default function BookingWizard({ treatments = [], settings = {}, categori
                 Select Date & Preferred Time
               </h2>
               <p className="text-sm text-clinic-muted">
-                Appointments with Dr. Aisha Sharma are scheduled in dedicated clinical slots to ensure zero wait times.
+                Appointments with {activeSettings?.doctor_name || 'our doctor'} are scheduled in dedicated clinical slots to ensure zero wait times.
               </p>
             </div>
 
@@ -1136,8 +1157,15 @@ export default function BookingWizard({ treatments = [], settings = {}, categori
 
                     <div>
                       <span className="text-[11px] uppercase font-bold text-clinic-muted tracking-wider block">Procedure</span>
-                      <span className="text-base font-bold text-primary block">{selectedTreatment?.title}</span>
-                      <span className="text-xs text-clinic-muted">Duration: {selectedTreatment?.duration || '45-60 mins'} • Supervised by Dr. Aisha Sharma</span>
+                      <div className="flex items-baseline justify-between gap-2">
+                        <span className="text-base font-bold text-primary block">{selectedTreatment?.title}</span>
+                        <span className="text-sm font-bold font-mono text-primary shrink-0">
+                          {selectedTreatment?.price && Number(selectedTreatment.price) > 0
+                            ? `₹${Number(selectedTreatment.price).toLocaleString('en-IN')}`
+                            : 'On Consultation'}
+                        </span>
+                      </div>
+                      <span className="text-xs text-clinic-muted">Duration: {selectedTreatment?.duration || '45-60 mins'} • Supervised by {activeSettings?.doctor_name || 'Lead Specialist'}</span>
                     </div>
 
                     <div>
@@ -1146,9 +1174,9 @@ export default function BookingWizard({ treatments = [], settings = {}, categori
                     </div>
 
                     <div className="bg-white p-3.5 rounded-xl border border-clinic-border-subtle text-xs text-clinic-muted leading-relaxed">
-                      <strong className="text-primary font-semibold">SkinGlow Aesthetic Clinic</strong><br />
-                      {settings.address || 'Radiant Medical Enclave, Linking Road, Bandra West, Mumbai'}<br />
-                      Helpline: {settings.phone || '+91 98201 23456'}
+                      <strong className="text-primary font-semibold">{activeSettings?.clinic_name || 'SkinGlow Aesthetic Clinic'}</strong><br />
+                      {activeSettings.address || 'Radiant Medical Enclave, Linking Road, Bandra West, Mumbai'}<br />
+                      Helpline: {activeSettings.phone || '+91 98201 23456'}
                     </div>
 
                     <div className="text-[11px] text-clinic-muted italic leading-relaxed">
@@ -1216,12 +1244,20 @@ export default function BookingWizard({ treatments = [], settings = {}, categori
                 <span className="font-semibold text-primary">{bookingConfirmation.treatment?.title || selectedTreatment?.title}</span>
               </div>
               <div className="flex justify-between py-2.5 border-b border-dashed border-clinic-border-subtle text-xs sm:text-sm">
+                <span className="text-clinic-muted">Estimated Procedure Fee</span>
+                <span className="font-bold font-mono text-primary">
+                  {(bookingConfirmation.treatment?.price ?? selectedTreatment?.price) && Number(bookingConfirmation.treatment?.price ?? selectedTreatment?.price) > 0
+                    ? `₹${Number(bookingConfirmation.treatment?.price ?? selectedTreatment?.price).toLocaleString('en-IN')}`
+                    : 'Complimentary / On Consultation'}
+                </span>
+              </div>
+              <div className="flex justify-between py-2.5 border-b border-dashed border-clinic-border-subtle text-xs sm:text-sm">
                 <span className="text-clinic-muted">Scheduled Slot</span>
                 <span className="font-semibold text-accent-hover">{formatDisplayDate(bookingConfirmation.preferred_date_time || selectedDate)} at {selectedTime}</span>
               </div>
               <div className="flex justify-between py-2.5 border-b border-dashed border-clinic-border-subtle text-xs sm:text-sm">
                 <span className="text-clinic-muted">Attending Specialist</span>
-                <span className="font-semibold text-primary">Dr. Aisha Sharma, MD</span>
+                <span className="font-semibold text-primary">{activeSettings?.doctor_name || 'Lead Specialist'}{activeSettings?.doctor_qualifications ? `, ${activeSettings.doctor_qualifications}` : ''}</span>
               </div>
               <div className="flex justify-between py-2.5 border-b border-dashed border-clinic-border-subtle text-xs sm:text-sm">
                 <span className="text-clinic-muted">Registered Phone</span>
@@ -1238,7 +1274,7 @@ export default function BookingWizard({ treatments = [], settings = {}, categori
               <p className="mt-1">
                 1. A confirmation receipt has been dispatched to <strong>{bookingConfirmation.email}</strong>.<br />
                 2. Our clinical coordinator will call you within 2 business hours to confirm your arrival window.<br />
-                3. Need immediate help? Call our front desk at <a href={`tel:${(settings.phone || '+919820123456').replace(/\s+/g, '')}`} className="font-semibold text-primary underline">{settings.phone || '+91 98201 23456'}</a>.
+                3. Need immediate help? Call our front desk at <a href={`tel:${(activeSettings.phone || '+919820123456').replace(/\s+/g, '')}`} className="font-semibold text-primary underline">{activeSettings.phone || '+91 98201 23456'}</a>.
               </p>
             </div>
 

@@ -127,7 +127,7 @@ export default function AdminInquiriesPage() {
   return (
     <div className="space-y-6">
       {/* Header & Title */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      {/* <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="font-serif text-2xl sm:text-3xl font-bold text-primary">
             Patient Inquiries Triage
@@ -136,7 +136,7 @@ export default function AdminInquiriesPage() {
             Review general messages, treatment questions, and consultation requests. Total: {totalCount}
           </p>
         </div>
-      </div>
+      </div> */}
 
       {/* Filter & Search Bar */}
       <div className="p-4 rounded-2xl bg-white border border-sand/60 shadow-sm space-y-4">

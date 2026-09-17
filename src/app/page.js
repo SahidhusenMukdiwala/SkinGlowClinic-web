@@ -48,7 +48,7 @@ export default async function HomePage() {
               </h1>
 
               <p className="text-base sm:text-lg text-clinic-muted leading-relaxed max-w-xl mb-8">
-                {settings.about_text ||
+                {settings.clinic_tagline || settings.about_text ||
                   'At SkinGlow Clinic, we blend cutting-edge medical dermatology with artistic aesthetic techniques. Our bespoke treatments restore balance, enhance radiance, and celebrate your natural skin health.'}
               </p>
 
@@ -198,7 +198,9 @@ export default async function HomePage() {
               </p>
 
               <p className="text-sm sm:text-base text-clinic-muted leading-relaxed">
-                With over 15 years of clinical practice in medical and aesthetic dermatology, Dr. Sharma brings an empathetic, science-backed approach to skin health. Having trained extensively in India and the United States, she is renowned for her mastery of laser physics and subtle facial rejuvenation.
+                {settings.doctor_bio || (
+                  `With extensive clinical practice in medical and aesthetic dermatology, ${settings.doctor_name || 'our specialist'} brings an empathetic, science-backed approach to skin health, subtle facial rejuvenation, and advanced clinical aesthetics.`
+                )}
               </p>
 
               <div className="flex flex-col gap-2.5 my-2">
@@ -265,7 +267,7 @@ export default async function HomePage() {
                 Ready to Experience Physician-Led Skincare?
               </h2>
               <p className="text-sm sm:text-base text-gray-300 leading-relaxed">
-                Take the first step toward lasting skin health. Schedule your in-depth diagnostic consultation with Dr. Aisha Sharma today.
+                Take the first step toward lasting skin health. Schedule your in-depth diagnostic consultation with {settings.doctor_name || 'our lead specialist'} today.
               </p>
             </div>
 

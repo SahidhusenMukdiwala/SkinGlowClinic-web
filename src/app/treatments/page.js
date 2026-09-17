@@ -1,19 +1,24 @@
 import React from 'react';
 import { Sparkles } from 'lucide-react';
-import { fetchTreatments, fetchCategoriesApi } from '@/lib/api';
+import { fetchTreatments, fetchCategoriesApi, fetchSettings } from '@/lib/api';
 import TreatmentsList from '@/components/treatments/TreatmentsList';
 
-export const metadata = {
-  title: 'Specialized Treatments | SkinGlow Clinic Mumbai',
-  description: 'Explore our complete spectrum of clinical dermatology, laser hair reduction, anti-aging aesthetics, and hair restoration therapies in Mumbai.',
-};
+export async function generateMetadata() {
+  const settings = await fetchSettings();
+  const clinicName = settings?.clinic_name || 'SkinGlow Clinic';
+  return {
+    title: `Specialized Treatments | ${clinicName}`,
+    description: `Explore our complete spectrum of clinical dermatology, laser hair reduction, anti-aging aesthetics, and hair restoration therapies at ${clinicName}.`,
+  };
+}
 
 export const revalidate = 60;
 
 export default async function TreatmentsPage() {
-  const [treatments, categories] = await Promise.all([
+  const [treatments, categories, settings] = await Promise.all([
     fetchTreatments(),
     fetchCategoriesApi(),
+    fetchSettings(),
   ]);
 
   return (
@@ -29,7 +34,7 @@ export default async function TreatmentsPage() {
             Clinical Treatments & Procedures
           </h1>
           <p className="text-sm sm:text-base text-clinic-muted max-w-2xl mx-auto leading-relaxed">
-            Every treatment at SkinGlow Clinic is backed by dermatological science, cutting-edge medical technology, and personalized clinical care.
+            Every treatment at {settings?.clinic_name || 'SkinGlow Clinic'} is backed by dermatological science, cutting-edge medical technology, and personalized clinical care.
           </p>
         </div>
       </header>

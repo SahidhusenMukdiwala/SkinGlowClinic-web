@@ -16,6 +16,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { getCurrentUser, logoutApi } from '@/lib/api';
+import { useSettings } from '@/context/SettingsContext';
 
 const NAV_LINKS = [
   { label: 'Home', href: '/' },
@@ -29,6 +30,7 @@ const NAV_LINKS = [
 export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
+  const { settings } = useSettings();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
@@ -107,7 +109,9 @@ export default function Navbar() {
             <Sparkles size={18} strokeWidth={2.2} />
           </div>
           <div className="flex flex-col">
-            <span className="font-heading text-2xl font-bold tracking-tight text-primary">SkinGlow</span>
+            <span className="font-heading text-2xl font-bold tracking-tight text-primary">
+              {settings?.clinic_name || 'SkinGlow'}
+            </span>
           </div>
         </Link>
 

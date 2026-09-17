@@ -5,12 +5,16 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
+import { TextStyle, FontFamily, FontSize } from '@tiptap/extension-text-style';
 import {
   Bold,
   Italic,
   Strikethrough,
+  Heading1,
   Heading2,
   Heading3,
+  Heading4,
+  Type,
   List,
   ListOrdered,
   Quote,
@@ -41,9 +45,12 @@ export default function RichTextEditor({
     extensions: [
       StarterKit.configure({
         heading: {
-          levels: [2, 3],
+          levels: [1, 2, 3, 4],
         },
       }),
+      TextStyle,
+      FontFamily,
+      FontSize,
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
@@ -61,12 +68,16 @@ export default function RichTextEditor({
     editorProps: {
       attributes: {
         class:
-          'prose prose-slate max-w-none focus:outline-none p-4 min-h-[300px] text-slate-800 font-sans leading-relaxed text-sm ' +
-          'prose-headings:font-serif prose-headings:text-primary prose-headings:font-bold ' +
-          'prose-h2:text-xl prose-h2:mt-4 prose-h2:mb-2 ' +
-          'prose-h3:text-lg prose-h3:mt-3 prose-h3:mb-1.5 ' +
-          'prose-p:my-2 prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5 ' +
-          'prose-blockquote:border-l-4 prose-blockquote:border-accent prose-blockquote:bg-cream/40 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-xl prose-blockquote:italic prose-blockquote:text-slate-700',
+          'tiptap focus:outline-none p-4 min-h-[300px] text-slate-800 font-sans leading-relaxed text-sm ' +
+          '[&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 ' +
+          '[&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2 ' +
+          '[&_li]:my-1 [&_li]:leading-normal ' +
+          '[&_h1]:text-2xl [&_h1]:font-bold [&_h1]:font-serif [&_h1]:text-primary [&_h1]:mt-4 [&_h1]:mb-2 ' +
+          '[&_h2]:text-xl [&_h2]:font-bold [&_h2]:font-serif [&_h2]:text-primary [&_h2]:mt-3 [&_h2]:mb-1.5 ' +
+          '[&_h3]:text-lg [&_h3]:font-bold [&_h3]:font-serif [&_h3]:text-primary [&_h3]:mt-2.5 [&_h3]:mb-1 ' +
+          '[&_h4]:text-base [&_h4]:font-bold [&_h4]:font-serif [&_h4]:text-primary [&_h4]:mt-2 [&_h4]:mb-1 ' +
+          '[&_p]:my-2 [&_p]:leading-relaxed ' +
+          '[&_blockquote]:border-l-4 [&_blockquote]:border-accent [&_blockquote]:bg-cream/40 [&_blockquote]:py-2 [&_blockquote]:px-4 [&_blockquote]:rounded-r-xl [&_blockquote]:italic [&_blockquote]:text-slate-700',
       },
     },
     onUpdate: ({ editor }) => {
@@ -126,6 +137,50 @@ export default function RichTextEditor({
       .run();
   };
 
+  const handleFontFamilyChange = (val) => {
+    if (!editor) return;
+    try {
+      const chain = editor.chain().focus();
+      if (!val) {
+        if (typeof chain.unsetFontFamily === 'function') {
+          chain.unsetFontFamily().run();
+        } else {
+          chain.setMark('textStyle', { fontFamily: null }).run();
+        }
+      } else {
+        if (typeof chain.setFontFamily === 'function') {
+          chain.setFontFamily(val).run();
+        } else {
+          chain.setMark('textStyle', { fontFamily: val }).run();
+        }
+      }
+    } catch (err) {
+      console.warn('Font family change error:', err);
+    }
+  };
+
+  const handleFontSizeChange = (val) => {
+    if (!editor) return;
+    try {
+      const chain = editor.chain().focus();
+      if (!val) {
+        if (typeof chain.unsetFontSize === 'function') {
+          chain.unsetFontSize().run();
+        } else {
+          chain.setMark('textStyle', { fontSize: null }).run();
+        }
+      } else {
+        if (typeof chain.setFontSize === 'function') {
+          chain.setFontSize(val).run();
+        } else {
+          chain.setMark('textStyle', { fontSize: val }).run();
+        }
+      }
+    } catch (err) {
+      console.warn('Font size change error:', err);
+    }
+  };
+
   return (
     <div className="space-y-2">
       {/* Header & Mode Switcher */}
@@ -133,7 +188,7 @@ export default function RichTextEditor({
         <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
           {label}
         </label>
-        <div className="flex items-center gap-1 bg-sand/40 p-0.5 rounded-lg text-xs font-semibold text-slate-600">
+        {/* <div className="flex items-center gap-1 bg-sand/40 p-0.5 rounded-lg text-xs font-semibold text-slate-600">
           <button
             type="button"
             onClick={() => setActiveTab('editor')}
@@ -158,7 +213,7 @@ export default function RichTextEditor({
             <Code2 size={13} />
             <span>HTML Source</span>
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Editor Frame */}
@@ -166,11 +221,38 @@ export default function RichTextEditor({
         {/* WYSIWYG Toolbar */}
         {activeTab === 'editor' && (
           <div className="flex flex-wrap items-center gap-1 p-2 bg-[#FAF8F5] border-b border-sand/60">
-            {/* Headings */}
+            {/* Paragraph & Headings */}
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().setParagraph().run()}
+              title="Normal Paragraph"
+              className={`px-2 py-1 rounded-lg text-xs font-semibold transition-all flex items-center gap-1 ${
+                editor.isActive('paragraph') && !editor.isActive('heading')
+                  ? 'bg-accent text-primary font-bold shadow-xs'
+                  : 'text-slate-700 hover:bg-white hover:text-primary hover:shadow-xs'
+              }`}
+            >
+              <Type size={14} />
+              <span>P</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+              title="Heading 1 (Main Title)"
+              className={`p-1.5 rounded-lg transition-all ${
+                editor.isActive('heading', { level: 1 })
+                  ? 'bg-accent text-primary font-bold shadow-xs'
+                  : 'text-slate-700 hover:bg-white hover:text-primary hover:shadow-xs'
+              }`}
+            >
+              <Heading1 size={16} />
+            </button>
+
             <button
               type="button"
               onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-              title="Heading 2"
+              title="Heading 2 (Section)"
               className={`p-1.5 rounded-lg transition-all ${
                 editor.isActive('heading', { level: 2 })
                   ? 'bg-accent text-primary font-bold shadow-xs'
@@ -179,10 +261,11 @@ export default function RichTextEditor({
             >
               <Heading2 size={16} />
             </button>
+
             <button
               type="button"
               onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-              title="Heading 3"
+              title="Heading 3 (Subsection)"
               className={`p-1.5 rounded-lg transition-all ${
                 editor.isActive('heading', { level: 3 })
                   ? 'bg-accent text-primary font-bold shadow-xs'
@@ -192,6 +275,54 @@ export default function RichTextEditor({
               <Heading3 size={16} />
             </button>
 
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
+              title="Heading 4 (Minor Subhead)"
+              className={`p-1.5 rounded-lg transition-all ${
+                editor.isActive('heading', { level: 4 })
+                  ? 'bg-accent text-primary font-bold shadow-xs'
+                  : 'text-slate-700 hover:bg-white hover:text-primary hover:shadow-xs'
+              }`}
+            >
+              <Heading4 size={16} />
+            </button>
+
+            <div className="h-4 w-px bg-sand/80 mx-1" />
+
+            {/* Font Family Selector */}
+            <select
+              value={editor.getAttributes('textStyle').fontFamily || ''}
+              onChange={(e) => handleFontFamilyChange(e.target.value)}
+              className="px-2 py-1 rounded-lg border border-sand/80 bg-white text-xs text-slate-700 font-medium focus:outline-none focus:ring-1 focus:ring-accent cursor-pointer"
+              title="Font Family"
+            >
+              <option value="">Font: Default</option>
+              <option value="Inter, sans-serif">Inter (Sans)</option>
+              <option value="'Playfair Display', Georgia, serif">Playfair Display (Serif)</option>
+              <option value="Georgia, serif">Georgia</option>
+              <option value="system-ui, sans-serif">System UI</option>
+              <option value="'Courier New', Courier, monospace">Monospace</option>
+            </select>
+
+            {/* Font Size Selector */}
+            <select
+              value={editor.getAttributes('textStyle').fontSize || ''}
+              onChange={(e) => handleFontSizeChange(e.target.value)}
+              className="px-2 py-1 rounded-lg border border-sand/80 bg-white text-xs text-slate-700 font-medium focus:outline-none focus:ring-1 focus:ring-accent cursor-pointer"
+              title="Font Size"
+            >
+              <option value="">Size: Auto</option>
+              <option value="12px">12px (Small)</option>
+              <option value="14px">14px (Compact)</option>
+              <option value="16px">16px (Normal)</option>
+              <option value="18px">18px (Medium)</option>
+              <option value="20px">20px (Large)</option>
+              <option value="24px">24px (XL)</option>
+              <option value="28px">28px (2XL)</option>
+              <option value="32px">32px (3XL)</option>
+            </select>
+
             <div className="h-4 w-px bg-sand/80 mx-1" />
 
             {/* Inline Styles */}
@@ -199,11 +330,10 @@ export default function RichTextEditor({
               type="button"
               onClick={() => editor.chain().focus().toggleBold().run()}
               title="Bold"
-              className={`p-1.5 rounded-lg transition-all ${
-                editor.isActive('bold')
+              className={`p-1.5 rounded-lg transition-all ${editor.isActive('bold')
                   ? 'bg-accent text-primary font-bold shadow-xs'
                   : 'text-slate-700 hover:bg-white hover:text-primary hover:shadow-xs'
-              }`}
+                }`}
             >
               <Bold size={15} />
             </button>
@@ -211,11 +341,10 @@ export default function RichTextEditor({
               type="button"
               onClick={() => editor.chain().focus().toggleItalic().run()}
               title="Italic"
-              className={`p-1.5 rounded-lg transition-all ${
-                editor.isActive('italic')
+              className={`p-1.5 rounded-lg transition-all ${editor.isActive('italic')
                   ? 'bg-accent text-primary font-bold shadow-xs'
                   : 'text-slate-700 hover:bg-white hover:text-primary hover:shadow-xs'
-              }`}
+                }`}
             >
               <Italic size={15} />
             </button>
@@ -223,11 +352,10 @@ export default function RichTextEditor({
               type="button"
               onClick={() => editor.chain().focus().toggleStrike().run()}
               title="Strike"
-              className={`p-1.5 rounded-lg transition-all ${
-                editor.isActive('strike')
+              className={`p-1.5 rounded-lg transition-all ${editor.isActive('strike')
                   ? 'bg-accent text-primary font-bold shadow-xs'
                   : 'text-slate-700 hover:bg-white hover:text-primary hover:shadow-xs'
-              }`}
+                }`}
             >
               <Strikethrough size={15} />
             </button>
@@ -239,11 +367,10 @@ export default function RichTextEditor({
               type="button"
               onClick={() => editor.chain().focus().toggleBulletList().run()}
               title="Bullet List"
-              className={`p-1.5 rounded-lg transition-all ${
-                editor.isActive('bulletList')
+              className={`p-1.5 rounded-lg transition-all ${editor.isActive('bulletList')
                   ? 'bg-accent text-primary font-bold shadow-xs'
                   : 'text-slate-700 hover:bg-white hover:text-primary hover:shadow-xs'
-              }`}
+                }`}
             >
               <List size={16} />
             </button>
@@ -251,11 +378,10 @@ export default function RichTextEditor({
               type="button"
               onClick={() => editor.chain().focus().toggleOrderedList().run()}
               title="Numbered List"
-              className={`p-1.5 rounded-lg transition-all ${
-                editor.isActive('orderedList')
+              className={`p-1.5 rounded-lg transition-all ${editor.isActive('orderedList')
                   ? 'bg-accent text-primary font-bold shadow-xs'
                   : 'text-slate-700 hover:bg-white hover:text-primary hover:shadow-xs'
-              }`}
+                }`}
             >
               <ListOrdered size={16} />
             </button>
@@ -263,11 +389,10 @@ export default function RichTextEditor({
               type="button"
               onClick={() => editor.chain().focus().toggleBlockquote().run()}
               title="Blockquote"
-              className={`p-1.5 rounded-lg transition-all ${
-                editor.isActive('blockquote')
+              className={`p-1.5 rounded-lg transition-all ${editor.isActive('blockquote')
                   ? 'bg-accent text-primary font-bold shadow-xs'
                   : 'text-slate-700 hover:bg-white hover:text-primary hover:shadow-xs'
-              }`}
+                }`}
             >
               <Quote size={15} />
             </button>
@@ -279,11 +404,10 @@ export default function RichTextEditor({
               type="button"
               onClick={setLink}
               title="Insert Link"
-              className={`p-1.5 rounded-lg transition-all ${
-                editor.isActive('link')
+              className={`p-1.5 rounded-lg transition-all ${editor.isActive('link')
                   ? 'bg-accent text-primary font-bold shadow-xs'
                   : 'text-slate-700 hover:bg-white hover:text-primary hover:shadow-xs'
-              }`}
+                }`}
             >
               <LinkIcon size={15} />
             </button>
@@ -349,9 +473,9 @@ export default function RichTextEditor({
         )}
       </div>
 
-      <p className="text-[11px] text-slate-400">
+      {/* <p className="text-[11px] text-slate-400">
         Powered by TipTap WYSIWYG editor. Format directly on screen or switch to HTML Source.
-      </p>
+      </p> */}
     </div>
   );
 }

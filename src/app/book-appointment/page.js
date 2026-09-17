@@ -3,10 +3,15 @@ import { Sparkles, ShieldCheck, Clock, Award } from 'lucide-react';
 import { fetchTreatments, fetchSettings, fetchCategoriesApi } from '@/lib/api';
 import BookingWizard from '@/components/booking/BookingWizard';
 
-export const metadata = {
-  title: 'Book an Appointment | SkinGlow Clinic Mumbai',
-  description: 'Schedule a personalized medical dermatology or aesthetic consultation with Dr. Aisha Sharma at SkinGlow Clinic, Bandra West, Mumbai.',
-};
+export async function generateMetadata() {
+  const settings = await fetchSettings();
+  const clinicName = settings?.clinic_name || 'SkinGlow Clinic';
+  const doctorName = settings?.doctor_name || 'our doctor';
+  return {
+    title: `Book an Appointment | ${clinicName}`,
+    description: `Schedule a personalized medical dermatology or aesthetic consultation with ${doctorName} at ${clinicName}.`,
+  };
+}
 
 export const revalidate = 60;
 
@@ -39,7 +44,7 @@ export default async function BookAppointmentPage() {
           <div className="flex items-center justify-center gap-4 sm:gap-8 flex-wrap mt-6 text-xs sm:text-sm font-medium text-primary">
             <div className="flex items-center gap-1.5">
               <ShieldCheck size={16} className="text-accent" />
-              <span>MD Dermatologist Directed</span>
+              <span>{settings?.doctor_qualifications ? `${settings.doctor_qualifications} Directed` : 'MD Dermatologist Directed'}</span>
             </div>
             <span className="w-1.5 h-1.5 rounded-full bg-accent hidden sm:inline-block" />
             <div className="flex items-center gap-1.5">

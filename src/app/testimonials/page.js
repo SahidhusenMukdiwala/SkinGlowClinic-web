@@ -11,17 +11,24 @@ import {
   ArrowRight,
   MessageSquareQuote,
 } from 'lucide-react';
-import { fetchTestimonials } from '@/lib/api';
+import { fetchTestimonials, fetchSettings } from '@/lib/api';
 
-export const metadata = {
-  title: 'Patient Stories & Verified Testimonials | SkinGlow Clinic Mumbai',
-  description: 'Read genuine verified reviews and patient experiences for clinical dermatology, laser hair reduction, PRP therapy, and anti-aging treatments at SkinGlow Clinic.',
-};
+export async function generateMetadata() {
+  const settings = await fetchSettings();
+  const clinicName = settings?.clinic_name || 'SkinGlow Clinic';
+  return {
+    title: `Patient Stories & Verified Testimonials | ${clinicName}`,
+    description: `Read genuine verified reviews and patient experiences for clinical dermatology, laser hair reduction, and anti-aging treatments at ${clinicName}.`,
+  };
+}
 
 export const revalidate = 60;
 
 export default async function TestimonialsPage() {
-  const testimonials = await fetchTestimonials();
+  const [testimonials, settings] = await Promise.all([
+    fetchTestimonials(),
+    fetchSettings(),
+  ]);
 
   return (
     <div className="min-h-screen bg-clinic-bg pb-24">
@@ -145,7 +152,7 @@ export default async function TestimonialsPage() {
               Ready to Experience Your Own Skin Transformation?
             </h3>
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed mb-8">
-              Join thousands of satisfied patients who trust Dr. Aisha Sharma MD and the SkinGlow clinical team for honest guidance and noticeable results.
+              Join thousands of satisfied patients who trust {settings?.doctor_name || 'our doctor'}{settings?.doctor_qualifications ? `, ${settings.doctor_qualifications}` : ''} and the {settings?.clinic_name || 'SkinGlow'} clinical team for honest guidance and noticeable results.
             </p>
             <div className="flex items-center justify-center gap-4 flex-wrap">
               <Link

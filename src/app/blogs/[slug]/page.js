@@ -19,20 +19,26 @@ import { fetchBlogBySlug, fetchSettings } from '@/lib/api';
 export const revalidate = 60;
 
 export async function generateMetadata({ params }) {
-  const data = await fetchBlogBySlug(params.slug);
+  const [data, settings] = await Promise.all([
+    fetchBlogBySlug(params.slug),
+    fetchSettings(),
+  ]);
+  const clinicName = settings?.clinic_name || 'SkinGlow Clinic';
+  const doctorName = settings?.doctor_name || 'Lead Specialist';
+
   if (!data || !data.blog) {
     return {
-      title: 'Article Not Found | SkinGlow Clinic Mumbai',
+      title: `Article Not Found | ${clinicName}`,
     };
   }
 
   const { blog } = data;
   return {
-    title: `${blog.title} | SkinGlow Clinic`,
-    description: `Read "${blog.title}" by Dr. Aisha Sharma MD at SkinGlow Clinic. Clinical insights, evidence-based dermatology, and aesthetic recommendations.`,
+    title: `${blog.title} | ${clinicName}`,
+    description: `Read "${blog.title}" by ${doctorName} at ${clinicName}. Clinical insights, evidence-based dermatology, and aesthetic recommendations.`,
     openGraph: {
-      title: `${blog.title} | SkinGlow Clinic`,
-      description: `Read "${blog.title}" by Dr. Aisha Sharma MD at SkinGlow Clinic.`,
+      title: `${blog.title} | ${clinicName}`,
+      description: `Read "${blog.title}" by ${doctorName} at ${clinicName}.`,
       images: [blog.cover_image],
     },
   };
@@ -101,12 +107,19 @@ export default async function BlogDetailPage({ params }) {
           {/* Author Byline Card */}
           <div className="flex items-center justify-between flex-wrap gap-4 pt-6 border-t border-clinic-border-subtle">
             <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center text-primary font-bold text-base shadow-xs">
-                AS
+              <div className="w-12 h-12 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center text-primary font-bold text-base shadow-xs overflow-hidden">
+                {settings?.doctor_image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={settings.doctor_image} alt={settings.doctor_name || 'Doctor'} className="w-full h-full object-cover" />
+                ) : (
+                  (settings?.doctor_name || 'Dr').split(' ').map(n => n[0]).slice(0, 2).join('')
+                )}
               </div>
               <div>
-                <h4 className="font-heading text-sm font-bold text-primary">Dr. Aisha Sharma, MD</h4>
-                <p className="text-xs text-clinic-muted">Dermatologist & Aesthetic Physician • Mumbai</p>
+                <h4 className="font-heading text-sm font-bold text-primary">
+                  {settings?.doctor_name || 'Dr. Aisha Sharma'}{settings?.doctor_qualifications ? `, ${settings.doctor_qualifications}` : ''}
+                </h4>
+                <p className="text-xs text-clinic-muted">Dermatologist & Aesthetic Physician • {settings?.clinic_name || 'SkinGlow Clinic'}</p>
               </div>
             </div>
 
@@ -150,34 +163,41 @@ export default async function BlogDetailPage({ params }) {
         />
 
         {/* Clinical Medical Disclaimer */}
-        <div className="mt-14 p-6 rounded-2xl bg-amber-50/60 border border-amber-200/80 flex items-start gap-3.5 text-xs sm:text-sm text-amber-900 leading-relaxed">
+        {/* <div className="mt-14 p-6 rounded-2xl bg-amber-50/60 border border-amber-200/80 flex items-start gap-3.5 text-xs sm:text-sm text-amber-900 leading-relaxed">
           <AlertTriangle size={20} className="text-amber-600 shrink-0 mt-0.5" />
           <div>
             <span className="font-bold block mb-1">Clinical Medical Disclaimer</span>
             The contents published in this article are for general educational purposes and dermatological awareness only. Every individual’s skin barrier and health history is unique. Always schedule an in-person clinical consultation with a qualified dermatologist before commencing any clinical procedure or medical skincare protocol.
           </div>
-        </div>
+        </div> */}
 
         {/* Author Bio Box */}
         <div className="mt-10 p-8 rounded-3xl bg-white border border-clinic-border-subtle shadow-sm flex flex-col sm:flex-row items-start sm:items-center gap-6">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent to-accent-soft text-primary font-bold text-xl flex items-center justify-center shrink-0 shadow-gold">
-            AS
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent to-accent-soft text-primary font-bold text-xl flex items-center justify-center shrink-0 shadow-gold overflow-hidden">
+            {settings?.doctor_image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={settings.doctor_image} alt={settings.doctor_name || 'Doctor'} className="w-full h-full object-cover" />
+            ) : (
+              (settings?.doctor_name || 'Dr').split(' ').map(n => n[0]).slice(0, 2).join('')
+            )}
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
-              <h4 className="font-heading text-lg font-bold text-primary">About Dr. Aisha Sharma, MD</h4>
+              <h4 className="font-heading text-lg font-bold text-primary">
+                About {settings?.doctor_name || 'Our Doctor'}{settings?.doctor_qualifications ? `, ${settings.doctor_qualifications}` : ''}
+              </h4>
               <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">
                 <Award size={12} /> Board Certified
               </span>
             </div>
             <p className="text-xs sm:text-sm text-clinic-muted leading-relaxed mb-4">
-              Senior Consultant Dermatologist with over 15 years of clinical practice specializing in non-invasive facial aesthetics, triple-wavelength laser protocols, and complex barrier restoration at SkinGlow Clinic Bandra West.
+              {settings?.doctor_bio || `Senior Consultant Dermatologist specializing in non-invasive facial aesthetics, advanced laser protocols, and complex barrier restoration at ${settings?.clinic_name || 'SkinGlow Clinic'}.`}
             </p>
             <Link
               href="/book-appointment"
               className="inline-flex items-center gap-1.5 text-xs font-bold text-accent hover:underline"
             >
-              Consult with Dr. Sharma <ArrowRight size={13} />
+              Consult with {settings?.doctor_name || 'our doctor'} <ArrowRight size={13} />
             </Link>
           </div>
         </div>

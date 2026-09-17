@@ -16,19 +16,26 @@ const inter = Inter({
   weight: ['300', '400', '500', '600', '700'],
 });
 
-export const metadata = {
-  title: 'SkinGlow Clinic | Premier Dermatology & Aesthetic Medicine',
-  description: 'Experience physician-led clinical dermatology, bespoke aesthetic enhancements, and advanced laser treatments in Mumbai.',
-  keywords: ['skincare', 'dermatology clinic', 'aesthetic medicine', 'laser clinic', 'anti-aging', 'skin doctor Mumbai'],
-  authors: [{ name: 'SkinGlow Clinic' }],
-  metadataBase: new URL('http://localhost:3000'),
-  openGraph: {
-    title: 'SkinGlow Clinic | Premier Dermatology & Aesthetic Medicine',
-    description: 'Physician-led clinical dermatology, bespoke aesthetic enhancements, and advanced laser treatments.',
-    type: 'website',
-    locale: 'en_IN',
-  },
-};
+import { fetchSettings } from '@/lib/api';
+
+export async function generateMetadata() {
+  const settings = await fetchSettings();
+  const clinicName = settings?.clinic_name || 'SkinGlow Clinic';
+  const tagline = settings?.clinic_tagline || 'Premier Dermatology & Aesthetic Medicine';
+  return {
+    title: `${clinicName} | ${tagline}`,
+    description: settings?.about_text || `Experience physician-led clinical dermatology, bespoke aesthetic enhancements, and advanced laser treatments at ${clinicName}.`,
+    keywords: ['skincare', 'dermatology clinic', 'aesthetic medicine', 'laser clinic', 'anti-aging', clinicName],
+    authors: [{ name: clinicName }],
+    metadataBase: new URL('http://localhost:3000'),
+    openGraph: {
+      title: `${clinicName} | ${tagline}`,
+      description: settings?.about_text || `Physician-led clinical dermatology, bespoke aesthetic enhancements, and advanced laser treatments at ${clinicName}.`,
+      type: 'website',
+      locale: 'en_IN',
+    },
+  };
+}
 
 export default function RootLayout({ children }) {
   return (

@@ -205,7 +205,7 @@ export default function AdminCustomersPage() {
   return (
     <div className="space-y-6">
       {/* Top Banner / Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="p-1.5 rounded-lg bg-accent/10 text-accent">
@@ -222,7 +222,7 @@ export default function AdminCustomersPage() {
             Manage patient accounts, inspect appointment booking histories, and toggle active status.
           </p>
         </div>
-      </div>
+      </div> */}
 
       {/* KPI Stats Cards */}
       {/* <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -402,7 +402,7 @@ export default function AdminCustomersPage() {
             <table className="w-full text-left text-sm">
               <thead className="bg-slate-50/80 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                 <tr>
-                  <th className="py-3.5 px-4 text-center w-12 sm:w-16">id</th>
+                  <th className="py-3.5 px-4 text-center w-12 sm:w-16">ID</th>
                   <th className="py-3.5 px-4 sm:px-6">Patient</th>
                   <th className="py-3.5 px-4">Contact Details</th>
                   <th className="py-3.5 px-4">Status</th>
@@ -426,15 +426,15 @@ export default function AdminCustomersPage() {
                       key={customer.id}
                       className="hover:bg-slate-50/60 transition-colors group"
                     >
-                      {/* Row Index / Serial Number */}
+                      {/* Customer Database ID */}
                       <td className="py-4 px-4 text-center text-xs font-mono font-semibold text-slate-400">
-                        {rowNumber}
+                        {customer.id}
                       </td>
 
                       {/* Patient Name & Avatar */}
                       <td className="py-4 px-4 sm:px-6">
                         <div className="flex items-center gap-3">
-                          <div
+                          {/* <div
                             className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xs tracking-wider shadow-sm shrink-0 ${
                               isActive
                                 ? 'bg-gradient-to-br from-accent/20 to-accent-soft/30 text-primary border border-accent/30'
@@ -442,19 +442,19 @@ export default function AdminCustomersPage() {
                             }`}
                           >
                             {initials}
-                          </div>
+                          </div> */}
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
                               <span className="font-semibold text-slate-900 truncate">
                                 {customer.full_name}
                               </span>
-                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 font-medium">
+                              {/* <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 font-medium">
                                 ID #{customer.id}
-                              </span>
+                              </span> */}
                             </div>
-                            <p className="text-xs text-slate-400 truncate">
+                            {/* <p className="text-xs text-slate-400 truncate">
                               Patient Account
-                            </p>
+                            </p> */}
                           </div>
                         </div>
                       </td>
@@ -540,13 +540,13 @@ export default function AdminCustomersPage() {
                               year: 'numeric',
                             })}
                           </span>
-                        </div>
-                        <p className="text-[11px] text-slate-400 mt-0.5">
+                        <p className="">
                           {new Date(customer.createdAt).toLocaleTimeString('en-US', {
                             hour: '2-digit',
                             minute: '2-digit',
                           })}
                         </p>
+                        </div>
                       </td>
 
                       {/* Actions */}

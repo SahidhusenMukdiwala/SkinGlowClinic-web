@@ -14,10 +14,15 @@ import {
 import { fetchSettings } from '@/lib/api';
 import SectionHeader from '@/components/common/SectionHeader';
 
-export const metadata = {
-  title: 'About Our Clinic & Physicians | SkinGlow Clinic Mumbai',
-  description: 'Learn about SkinGlow Clinic, our founding philosophy, Dr. Aisha Sharma, MD, and our state-of-the-art dermatological equipment in Mumbai.',
-};
+export async function generateMetadata() {
+  const settings = await fetchSettings();
+  const clinicName = settings?.clinic_name || 'SkinGlow Clinic';
+  const doctorName = settings?.doctor_name || 'Dr. Aisha Sharma';
+  return {
+    title: `About Our Clinic & Physicians | ${clinicName}`,
+    description: `Learn about ${clinicName}, our founding philosophy, ${doctorName}, and our state-of-the-art dermatological equipment.`,
+  };
+}
 
 export const revalidate = 60;
 
@@ -85,7 +90,7 @@ export default async function AboutPage() {
             <div className="lg:col-span-5 rounded-2xl overflow-hidden shadow-lg border border-clinic-border-subtle">
               <Image
                 src={settings.about_image || 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1200&q=80'}
-                alt="SkinGlow Clinic Facilities"
+                alt={`${settings.clinic_name || 'SkinGlow'} Clinic Facilities`}
                 width={600}
                 height={460}
                 className="w-full h-auto object-cover"
@@ -102,7 +107,7 @@ export default async function AboutPage() {
             <div className="lg:col-span-5 rounded-2xl overflow-hidden shadow-md">
               <Image
                 src={settings.doctor_image || settings.doctor_profile_image || "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=1000&q=80"}
-                alt={settings.doctor_name || 'Dr. Aisha Sharma'}
+                alt={settings.doctor_name || 'Lead Specialist'}
                 width={500}
                 height={500}
                 className="w-full h-auto object-cover"
@@ -120,7 +125,9 @@ export default async function AboutPage() {
               </p>
 
               <p className="text-sm sm:text-base text-clinic-muted leading-relaxed">
-                Dr. Aisha Sharma is an acclaimed dermatologist with over 15 years of rigorous clinical practice. Having graduated with top honors and completed specialized fellowships in procedural laser surgery and aesthetic medicine in the US, Dr. Sharma combines medical precision with an acute eye for natural proportion.
+                {settings.doctor_bio || (
+                  `${settings.doctor_name || 'Our lead physician'} is an acclaimed specialist with rigorous clinical practice, combining medical precision with an acute eye for natural proportion and patient-centric dermatology.`
+                )}
               </p>
               <p className="text-sm sm:text-base text-primary italic leading-relaxed border-l-2 border-accent pl-4 my-1">
                 &ldquo;My mission is never to change who you are, but to restore your innate glow and bolster your skin barrier with lasting vitality.&rdquo;
@@ -143,7 +150,7 @@ export default async function AboutPage() {
 
               <Link href="/book-appointment" className="btn btn-primary mt-2">
                 <Calendar size={18} />
-                <span>Book Consultation With Dr. Sharma</span>
+                <span>Book Consultation With {settings.doctor_name || 'Specialist'}</span>
               </Link>
             </div>
           </div>
@@ -201,7 +208,7 @@ export default async function AboutPage() {
               Begin Your Skin Transformation Today
             </h2>
             <p className="text-sm sm:text-base text-gray-300 leading-relaxed mb-8">
-              Schedule your confidential diagnostic evaluation with Dr. Aisha Sharma and receive a customized clinical treatment plan.
+              Schedule your confidential diagnostic evaluation with {settings.doctor_name || 'our lead specialist'} and receive a customized clinical treatment plan.
             </p>
             <div className="flex items-center justify-center gap-4 flex-wrap">
               <Link href="/book-appointment" className="btn btn-primary">

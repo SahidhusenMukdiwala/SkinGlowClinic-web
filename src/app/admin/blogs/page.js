@@ -201,27 +201,20 @@ export default function AdminBlogsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
+      {/* <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-4"> */}
+      {/* <div>
           <h2 className="font-serif text-2xl sm:text-3xl font-bold text-primary">
             Clinical Blogs & Insights
           </h2>
           <p className="text-slate-500 text-sm">
             Publish clinical advice, dermatological breakthroughs, and patient guides. Total: {totalCount}
           </p>
-        </div>
+        </div> */}
 
-        <div className="flex items-center gap-3 self-start sm:self-auto">
-          <button
-            type="button"
-            onClick={handleOpenCreate}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent to-accent-soft text-primary text-sm font-bold shadow-gold hover:shadow-lg transition-all"
-          >
-            <Plus size={18} />
-            <span>Write Article</span>
-          </button>
-        </div>
-      </div>
+      {/* <div className="flex items-center gap-3 self-start sm:self-auto"> */}
+
+      {/* </div> */}
+      {/* </div> */}
 
       {/* Filter Toolbar */}
       <div className="bg-white p-4 rounded-2xl border border-sand/80 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
@@ -240,19 +233,28 @@ export default function AdminBlogsPage() {
             className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-sand bg-cream/30 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
           />
         </div>
-
-        <select
-          value={publishedFilter}
-          onChange={(e) => {
-            setPublishedFilter(e.target.value);
-            setCurrentPage(1);
-          }}
-          className="px-3.5 py-2.5 rounded-xl border border-sand bg-white text-sm text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-accent/40"
-        >
-          <option value="all">All Articles</option>
-          <option value="1">Published Only</option>
-          <option value="0">Drafts Only</option>
-        </select>
+        <div className="flex items-center flex-wrap sm:flex-nowrap gap-2 sm:gap-3 w-full sm:w-auto">
+          <select
+            value={publishedFilter}
+            onChange={(e) => {
+              setPublishedFilter(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="flex-1 sm:flex-initial sm:w-40 px-3.5 py-2.5 rounded-xl border border-sand bg-white text-sm text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-accent/40 cursor-pointer"
+          >
+            <option value="all">All Articles</option>
+            <option value="1">Published Only</option>
+            <option value="0">Drafts Only</option>
+          </select>
+          <button
+            type="button"
+            onClick={handleOpenCreate}
+            className="inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent to-accent-soft text-primary text-sm font-bold shadow-gold hover:shadow-lg transition-all shrink-0 whitespace-nowrap"
+          >
+            <Plus size={18} />
+            <span>Write Article</span>
+          </button>
+        </div>
       </div>
 
       {/* Table Container */}
@@ -278,6 +280,7 @@ export default function AdminBlogsPage() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-sand bg-cream/40 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                  <th className="py-3.5 px-4 sm:px-6 w-16">ID</th>
                   <th className="py-3.5 px-4 sm:px-6">Article</th>
                   <th className="py-3.5 px-4">Slug</th>
                   <th className="py-3.5 px-4">Date</th>
@@ -291,6 +294,11 @@ export default function AdminBlogsPage() {
 
                   return (
                     <tr key={blog.id} className="hover:bg-sand/15 transition-colors">
+                      {/* ID */}
+                      <td className="py-3.5 px-4 sm:px-6 font-mono text-xs font-semibold text-slate-500">
+                        {blog.id}
+                      </td>
+
                       {/* Cover & Title */}
                       <td className="py-3.5 px-4 sm:px-6">
                         <div className="flex items-center gap-3">
@@ -327,8 +335,8 @@ export default function AdminBlogsPage() {
                           type="button"
                           onClick={() => handleTogglePublish(blog)}
                           className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${isPublished
-                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
-                              : 'bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100'
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
+                            : 'bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100'
                             }`}
                           title="Click to toggle publish status"
                         >
@@ -428,8 +436,8 @@ export default function AdminBlogsPage() {
               {formMsg && (
                 <div
                   className={`p-3.5 rounded-xl text-xs font-semibold flex items-center gap-2 ${formMsg.type === 'success'
-                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                      : 'bg-red-50 text-red-700 border border-red-200'
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                    : 'bg-red-50 text-red-700 border border-red-200'
                     }`}
                 >
                   {formMsg.type === 'success' ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
@@ -519,7 +527,7 @@ export default function AdminBlogsPage() {
 
               {/* Rich Text Editor */}
               <RichTextEditor
-                label="Article Body (Option 1 Custom Luxury Editor)"
+                label="Article Body"
                 value={formContent}
                 onChange={setFormContent}
                 placeholder="Write your clinical insights, patient advice, procedure explanations..."

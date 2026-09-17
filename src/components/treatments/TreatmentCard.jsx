@@ -24,6 +24,11 @@ export default function TreatmentCard({ treatment }) {
           <Sparkles size={11} />
           <span>{categoryName}</span>
         </div>
+        {treatment.price && Number(treatment.price) > 0 ? (
+          <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-sm text-primary text-xs font-mono font-bold shadow-sm border border-sand">
+            ₹{Number(treatment.price).toLocaleString('en-IN')}
+          </div>
+        ) : null}
         {treatment.duration && (
           <div className="absolute bottom-3 right-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-primary text-xs font-medium flex items-center gap-1 shadow-sm">
             <Clock size={11} />
@@ -48,9 +53,11 @@ export default function TreatmentCard({ treatment }) {
             <span>View Clinical Profile</span>
             <ArrowRight size={14} />
           </Link>
-          <Link href={`/book-appointment?treatment=${treatment.slug}`} className="px-3.5 py-1.5 rounded-full bg-accent/15 hover:bg-accent text-primary text-xs font-semibold transition-all">
-            Book
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link href={`/book-appointment?treatment=${treatment.slug}`} className="px-3.5 py-1.5 rounded-full bg-accent/15 hover:bg-accent text-primary text-xs font-semibold transition-all">
+              Book
+            </Link>
+          </div>
         </div>
       </div>
     </article>

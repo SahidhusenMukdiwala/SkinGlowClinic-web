@@ -1,8 +1,15 @@
+'use client';
+
 import React from 'react';
+import { useSettings } from '@/context/SettingsContext';
 
 export default function WhatsAppFloat() {
-  const whatsappNumber = '919820123456';
-  const defaultMessage = encodeURIComponent('Hello SkinGlow Clinic, I would like to inquire about your treatments.');
+  const { settings } = useSettings();
+
+  const rawPhone = settings?.whatsapp_number || settings?.phone || '919820123456';
+  const whatsappNumber = rawPhone.replace(/[^\d]/g, '');
+  const clinicName = settings?.clinic_name || 'SkinGlow Clinic';
+  const defaultMessage = encodeURIComponent(`Hello ${clinicName}, I would like to inquire about your treatments.`);
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${defaultMessage}`;
 
   return (
@@ -15,7 +22,7 @@ export default function WhatsAppFloat() {
         target="_blank"
         rel="noopener noreferrer"
         className="relative w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
-        aria-label="Chat with SkinGlow Clinic on WhatsApp"
+        aria-label={`Chat with ${clinicName} on WhatsApp`}
       >
         <span className="absolute inset-0 rounded-full bg-[#25D366] opacity-60 animate-ping -z-10"></span>
         <svg

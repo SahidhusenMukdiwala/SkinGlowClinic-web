@@ -157,33 +157,10 @@ export default function AdminCategoriesPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-primary">
-            Clinical Categories
-          </h2>
-          <p className="text-slate-500 text-sm">
-            Manage treatment disciplines, specialties, and taxonomy. Total: {categories.length}
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3 self-start sm:self-auto">
-          <button
-            type="button"
-            onClick={handleOpenCreate}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent to-accent-soft text-primary text-sm font-bold shadow-gold hover:shadow-lg transition-all"
-          >
-            <Plus size={18} />
-            <span>Add Category</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Filter Toolbar */}
-      <div className="bg-white p-4 rounded-2xl border border-sand/80 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+      {/* Filter & Action Toolbar */}
+      <div className="bg-white p-3 sm:p-4 rounded-2xl border border-sand/80 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
         {/* Search */}
-        <div className="relative flex-1">
+        <div className="relative flex-1 min-w-0">
           <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
             <Search size={17} />
           </div>
@@ -196,29 +173,42 @@ export default function AdminCategoriesPage() {
           />
         </div>
 
-        {/* Status Filter */}
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-3.5 py-2.5 rounded-xl border border-sand bg-white text-sm text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-accent/40"
-        >
-          <option value="all">All Status</option>
-          <option value="1">Active Only</option>
-          <option value="0">Inactive Only</option>
-        </select>
+        {/* Action Controls Row */}
+        <div className="flex items-center flex-wrap gap-2 sm:gap-3 w-full sm:w-auto">
+          {/* Status Filter */}
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="flex-1 sm:flex-initial sm:w-36 px-3.5 py-2.5 rounded-xl border border-sand bg-white text-sm text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-accent/40 cursor-pointer"
+          >
+            <option value="all">All Status</option>
+            <option value="1">Active Only</option>
+            <option value="0">Inactive Only</option>
+          </select>
+
+          {/* Add Category Button */}
+          <button
+            type="button"
+            onClick={handleOpenCreate}
+            className="inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent to-accent-soft text-primary text-sm font-bold shadow-gold hover:shadow-lg transition-all shrink-0 whitespace-nowrap"
+          >
+            <Plus size={18} />
+            <span>Add Category</span>
+          </button>
+        </div>
       </div>
 
       {/* Table Container */}
       <div className="bg-white rounded-2xl border border-sand/80 shadow-xs overflow-hidden">
         {loading && categories.length === 0 ? (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse min-w-[480px] sm:min-w-0">
               <thead>
                 <tr className="border-b border-sand bg-cream/40 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                  <th className="py-3.5 px-4 sm:px-6 w-20">ID</th>
-                  <th className="py-3.5 px-4 sm:px-6">Category Name</th>
-                  <th className="py-3.5 px-4 w-36">Status</th>
-                  <th className="py-3.5 px-4 sm:px-6 text-right w-28">Actions</th>
+                  <th className="py-3.5 px-3 sm:px-6 w-16 sm:w-20">ID</th>
+                  <th className="py-3.5 px-3 sm:px-6">Category Name</th>
+                  <th className="py-3.5 px-2 sm:px-4 w-28 sm:w-36">Status</th>
+                  <th className="py-3.5 px-3 sm:px-6 text-right w-24 sm:w-28">Actions</th>
                 </tr>
               </thead>
               <TableSkeleton rows={5} columns={4} />
@@ -239,13 +229,13 @@ export default function AdminCategoriesPage() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse min-w-[480px] sm:min-w-0">
               <thead>
                 <tr className="border-b border-sand bg-cream/40 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                  <th className="py-3.5 px-4 sm:px-6 w-20">ID</th>
-                  <th className="py-3.5 px-4 sm:px-6">Category Name</th>
-                  <th className="py-3.5 px-4 w-36">Status</th>
-                  <th className="py-3.5 px-4 sm:px-6 text-right w-28">Actions</th>
+                  <th className="py-3.5 px-3 sm:px-6 w-16 sm:w-20">ID</th>
+                  <th className="py-3.5 px-3 sm:px-6">Category Name</th>
+                  <th className="py-3.5 px-2 sm:px-4 w-28 sm:w-36">Status</th>
+                  <th className="py-3.5 px-3 sm:px-6 text-right w-24 sm:w-28">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-sand/60 text-sm">
@@ -255,15 +245,15 @@ export default function AdminCategoriesPage() {
                   return (
                     <tr key={cat.id} className="hover:bg-sand/15 transition-colors">
                       {/* ID */}
-                      <td className="py-3.5 px-4 sm:px-6 font-mono text-xs font-semibold text-slate-500">
-                        #{cat.id}
+                      <td className="py-3.5 px-3 sm:px-6 font-mono text-xs font-semibold text-slate-500">
+                        {cat.id}
                       </td>
 
                       {/* Name */}
-                      <td className="py-3.5 px-4 sm:px-6">
-                        <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-xl bg-accent/15 flex items-center justify-center text-accent shrink-0">
-                            <Tags size={16} />
+                      <td className="py-3.5 px-3 sm:px-6">
+                        <div className="flex items-center gap-2.5 sm:gap-3">
+                          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-accent/15 flex items-center justify-center text-accent shrink-0">
+                            <Tags size={15} />
                           </div>
                           <span className="font-semibold text-primary">
                             {cat.name}

@@ -2,19 +2,27 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Sparkles, Calendar, Clock, ArrowRight, User, BookOpen, Search } from 'lucide-react';
-import { fetchBlogs } from '@/lib/api';
+import { fetchBlogs, fetchSettings } from '@/lib/api';
 import SectionHeader from '@/components/common/SectionHeader';
 
-export const metadata = {
-  title: 'Clinical Skincare Blogs & Dermatological Insights | SkinGlow Clinic Mumbai',
-  description: 'Evidence-based skincare advice, breakthrough aesthetic procedures, and clinical guides written by Dr. Aisha Sharma MD at SkinGlow Clinic.',
-};
+export async function generateMetadata() {
+  const settings = await fetchSettings();
+  const clinicName = settings?.clinic_name || 'SkinGlow Clinic';
+  const doctorName = settings?.doctor_name || 'our doctor';
+  return {
+    title: `Clinical Skincare Blogs & Dermatological Insights | ${clinicName}`,
+    description: `Evidence-based skincare advice, breakthrough aesthetic procedures, and clinical guides written by ${doctorName} at ${clinicName}.`,
+  };
+}
 
 export const revalidate = 60;
 
 export default async function BlogsPage({ searchParams }) {
   const query = searchParams?.search || '';
-  const data = await fetchBlogs({ search: query });
+  const [data, settings] = await Promise.all([
+    fetchBlogs({ search: query }),
+    fetchSettings(),
+  ]);
   const blogs = data?.blogs || [];
 
   const featuredBlog = blogs[0];
@@ -112,11 +120,16 @@ export default async function BlogsPage({ searchParams }) {
 
                 <div className="pt-6 border-t border-clinic-border-subtle flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-accent/15 border border-accent/30 flex items-center justify-center text-primary font-bold text-sm">
-                      AS
+                    <div className="w-10 h-10 rounded-full bg-accent/15 border border-accent/30 flex items-center justify-center text-primary font-bold text-sm overflow-hidden">
+                      {settings?.doctor_image ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={settings.doctor_image} alt={settings.doctor_name || 'Doctor'} className="w-full h-full object-cover" />
+                      ) : (
+                        (settings?.doctor_name || 'Dr').split(' ').map(n => n[0]).slice(0, 2).join('')
+                      )}
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-primary">{featuredBlog.author || 'Dr. Aisha Sharma, MD'}</div>
+                      <div className="text-xs font-bold text-primary">{featuredBlog.author || settings?.doctor_name || 'Lead Dermatologist'}{settings?.doctor_qualifications ? `, ${settings.doctor_qualifications}` : ''}</div>
                       <div className="text-[11px] text-clinic-muted">Lead Dermatologist</div>
                     </div>
                   </div>
@@ -197,10 +210,15 @@ export default async function BlogsPage({ searchParams }) {
 
                     <div className="pt-4 border-t border-clinic-border-subtle/80 flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-full bg-accent/15 flex items-center justify-center text-primary text-xs font-bold">
-                          AS
+                        <div className="w-7 h-7 rounded-full bg-accent/15 flex items-center justify-center text-primary text-xs font-bold overflow-hidden">
+                          {settings?.doctor_image ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={settings.doctor_image} alt={settings.doctor_name || 'Doctor'} className="w-full h-full object-cover" />
+                          ) : (
+                            (settings?.doctor_name || 'Dr').split(' ').map(n => n[0]).slice(0, 2).join('')
+                          )}
                         </div>
-                        <span className="text-xs font-medium text-slate-700">Dr. Aisha Sharma</span>
+                        <span className="text-xs font-medium text-slate-700">{blog.author || settings?.doctor_name || 'Lead Specialist'}</span>
                       </div>
 
                       <Link
@@ -225,10 +243,10 @@ export default async function BlogsPage({ searchParams }) {
               <span>Personalized Diagnosis</span>
             </div>
             <h3 className="font-heading text-white text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 leading-tight">
-              Have Specific Skin Concerns? Consult With Dr. Aisha Sharma MD
+              Have Specific Skin Concerns? Consult With {settings?.doctor_name || 'Our Doctor'}{settings?.doctor_qualifications ? `, ${settings.doctor_qualifications}` : ''}
             </h3>
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed mb-8">
-              Every skin type possesses unique biological needs. Schedule an in-depth dermatological consultation at our Bandra West clinic for comprehensive evaluation and custom care.
+              Every skin type possesses unique biological needs. Schedule an in-depth dermatological consultation at {settings?.clinic_name || 'our clinic'} for comprehensive evaluation and custom care.
             </p>
             <div className="flex items-center gap-4 flex-wrap">
               <Link

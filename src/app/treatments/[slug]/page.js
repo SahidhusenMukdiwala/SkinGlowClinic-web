@@ -9,17 +9,21 @@ import { CATEGORY_MAP } from '@/lib/constants';
 export const revalidate = 60;
 
 export async function generateMetadata({ params }) {
-  const data = await fetchTreatmentBySlug(params.slug);
+  const [data, settings] = await Promise.all([
+    fetchTreatmentBySlug(params.slug),
+    fetchSettings(),
+  ]);
+  const clinicName = settings?.clinic_name || 'SkinGlow Clinic';
   if (!data || !data.treatment) {
     return {
-      title: 'Treatment Not Found | SkinGlow Clinic',
+      title: `Treatment Not Found | ${clinicName}`,
     };
   }
 
   const { treatment } = data;
   return {
-    title: `${treatment.title} | SkinGlow Clinic Mumbai`,
-    description: treatment.short_description || `Learn about ${treatment.title} at SkinGlow Clinic. Physician-led dermatology and laser aesthetics.`,
+    title: `${treatment.title} | ${clinicName}`,
+    description: treatment.short_description || `Learn about ${treatment.title} at ${clinicName}. Physician-led dermatology and laser aesthetics.`,
   };
 }
 
@@ -36,9 +40,19 @@ export default async function TreatmentDetailPage({ params }) {
   const { treatment, related = [] } = data;
   const categoryName = CATEGORY_MAP[treatment.category] || 'Clinical Aesthetic';
 
-  // Render markdown-like sections into clean semantic blocks
+  // Render rich HTML from TipTap or markdown-like sections into clean semantic blocks
   const renderFormattedDescription = (text) => {
     if (!text) return null;
+
+    // Detect if content contains HTML tags from TipTap editor
+    if (/<[a-z][\s\S]*>/i.test(text)) {
+      return (
+        <div
+          className="rich-text-content text-clinic-text leading-relaxed font-sans"
+          dangerouslySetInnerHTML={{ __html: text }}
+        />
+      );
+    }
 
     const blocks = text.split('\n\n');
     return blocks.map((block, idx) => {
@@ -94,7 +108,7 @@ export default async function TreatmentDetailPage({ params }) {
       {/* Hero Header */}
       <header className="py-12 lg:py-16 bg-gradient-to-b from-primary/5 via-clinic-bg to-clinic-bg border-b border-clinic-border-subtle">
         <div className="container">
-          <div className="flex items-center gap-2.5 mb-3">
+          <div className="flex items-center gap-2.5 mb-3 flex-wrap">
             <div className="badge">
               <Sparkles size={12} />
               <span>{categoryName}</span>
@@ -105,6 +119,13 @@ export default async function TreatmentDetailPage({ params }) {
                 <span>Duration: {treatment.duration}</span>
               </div>
             )}
+            <div className="badge bg-sand/30 text-primary border-sand">
+              <span>
+                {treatment.price && Number(treatment.price) > 0
+                  ? `Fee: ₹${Number(treatment.price).toLocaleString('en-IN')}`
+                  : 'Consultation Included'}
+              </span>
+            </div>
           </div>
 
           <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-primary font-bold mb-3">
@@ -142,7 +163,7 @@ export default async function TreatmentDetailPage({ params }) {
               <CheckCircle2 size={24} className="text-emerald-500 shrink-0 mt-0.5" />
               <div>
                 <h4 className="font-heading text-base font-bold text-primary mb-1">
-                  SkinGlow Clinical Safety Assurance
+                  {settings?.clinic_name || 'SkinGlow'} Clinical Safety Assurance
                 </h4>
                 <p className="text-xs sm:text-sm text-clinic-muted leading-relaxed">
                   This procedure is administered exclusively using sterile medical disposables and US-FDA cleared clinical equipment under the direct supervision of Board-Certified dermatologists.
@@ -157,7 +178,7 @@ export default async function TreatmentDetailPage({ params }) {
             <div className="bg-white p-6 rounded-2xl border border-clinic-border shadow-md sticky top-24">
               <h3 className="font-heading text-xl font-bold text-primary mb-1">Schedule This Treatment</h3>
               <p className="text-xs sm:text-sm text-clinic-muted mb-6 leading-relaxed">
-                Personalized diagnostic evaluation and customized procedure with Dr. Aisha Sharma.
+                Personalized diagnostic evaluation and customized procedure with {settings?.doctor_name || 'our lead physician'}.
               </p>
 
               <div className="flex flex-col gap-3 mb-6 pb-6 border-b border-clinic-border-subtle text-xs sm:text-sm">
@@ -166,12 +187,20 @@ export default async function TreatmentDetailPage({ params }) {
                   <span className="font-semibold text-primary">{treatment.duration || '45 mins'}</span>
                 </div>
                 <div className="flex items-center justify-between text-clinic-muted">
+                  <span className="flex items-center gap-1.5"><Sparkles size={14} /> Procedure Fee</span>
+                  <span className="font-bold font-mono text-primary">
+                    {treatment.price && Number(treatment.price) > 0
+                      ? `₹${Number(treatment.price).toLocaleString('en-IN')}`
+                      : 'On Consultation'}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-clinic-muted">
                   <span className="flex items-center gap-1.5"><Sparkles size={14} /> Category</span>
                   <span className="font-semibold text-primary">{categoryName}</span>
                 </div>
                 <div className="flex items-center justify-between text-clinic-muted">
                   <span className="flex items-center gap-1.5"><CheckCircle2 size={14} /> Supervised By</span>
-                  <span className="font-semibold text-primary">MD Dermatologist</span>
+                  <span className="font-semibold text-primary">{settings?.doctor_qualifications ? `${settings.doctor_qualifications} Specialist` : 'MD Dermatologist'}</span>
                 </div>
               </div>
 

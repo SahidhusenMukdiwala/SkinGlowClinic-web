@@ -68,6 +68,7 @@ export default function AdminTreatmentsPage() {
   const [formSlug, setFormSlug] = useState('');
   const [formCategory, setFormCategory] = useState(1);
   const [formDuration, setFormDuration] = useState('30-45 mins');
+  const [formPrice, setFormPrice] = useState(0);
   const [formDisplayOrder, setFormDisplayOrder] = useState(0);
   const [formIsActive, setFormIsActive] = useState(1);
   const [formShortDesc, setFormShortDesc] = useState('');
@@ -120,6 +121,7 @@ export default function AdminTreatmentsPage() {
     setFormSlug('');
     setFormCategory(categories[0]?.id || 1);
     setFormDuration('45-60 mins');
+    setFormPrice(0);
     setFormDisplayOrder(0);
     setFormIsActive(1);
     setFormShortDesc('');
@@ -137,6 +139,7 @@ export default function AdminTreatmentsPage() {
     setFormSlug(treatment.slug || '');
     setFormCategory(treatment.category_id || treatment.category?.id || 1);
     setFormDuration(treatment.duration || '');
+    setFormPrice(treatment.price ?? 0);
     setFormDisplayOrder(treatment.display_order ?? 0);
     setFormIsActive(treatment.is_active ?? 1);
     setFormShortDesc(treatment.short_description || '');
@@ -177,6 +180,7 @@ export default function AdminTreatmentsPage() {
       formData.append('category_id', String(formCategory));
       formData.append('category', String(formCategory));
       formData.append('duration', formDuration.trim());
+      formData.append('price', String(formPrice || 0));
       formData.append('display_order', String(formDisplayOrder));
       formData.append('is_active', String(formIsActive));
       formData.append('short_description', formShortDesc.trim());
@@ -234,48 +238,42 @@ export default function AdminTreatmentsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
+      {/* <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"> */}
+        {/* <div>
           <h2 className="font-serif text-2xl sm:text-3xl font-bold text-primary">
             Treatments Catalog
           </h2>
           <p className="text-slate-500 text-sm">
             Manage clinical procedures, categories, descriptions, and media. Total: {totalCount}
           </p>
-        </div>
+        </div> */}
 
-        <div className="flex items-center gap-3 self-start sm:self-auto">
-          <button
-            type="button"
-            onClick={handleOpenCreate}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent to-accent-soft text-primary text-sm font-bold shadow-gold hover:shadow-lg transition-all"
-          >
-            <Plus size={18} />
-            <span>Add Treatment</span>
-          </button>
-        </div>
-      </div>
+        {/* <div className="flex items-center gap-3 self-start sm:self-auto">
+          
+        </div> */}
+      {/* </div> */}
 
       {/* Filter Toolbar */}
-      <div className="bg-white p-4 rounded-2xl border border-sand/80 shadow-xs space-y-3">
-        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3">
-          {/* Search */}
-          <div className="relative flex-1">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-              <Search size={17} />
-            </div>
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setCurrentPage(1);
-              }}
-              placeholder="Search treatments by title or description..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-sand bg-cream/30 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
-            />
+      <div className="bg-white p-3 sm:p-4 rounded-2xl border border-sand/80 shadow-xs flex flex-col lg:flex-row items-stretch lg:items-center gap-3">
+        {/* Search */}
+        <div className="relative flex-1 min-w-0">
+          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <Search size={17} />
           </div>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCurrentPage(1);
+            }}
+            placeholder="Search treatments by title or description..."
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-sand bg-cream/30 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
+          />
+        </div>
 
+        {/* Filters & Actions Container */}
+        <div className="flex items-center flex-wrap sm:flex-nowrap gap-2 sm:gap-3 w-full lg:w-auto">
           {/* Category Filter */}
           <select
             value={categoryFilter}
@@ -283,7 +281,7 @@ export default function AdminTreatmentsPage() {
               setCategoryFilter(e.target.value);
               setCurrentPage(1);
             }}
-            className="px-3.5 py-2.5 rounded-xl border border-sand bg-white text-sm text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-accent/40"
+            className="flex-1 sm:flex-initial sm:w-44 px-3.5 py-2.5 rounded-xl border border-sand bg-white text-sm text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-accent/40 cursor-pointer"
           >
             <option value="all">All Categories</option>
             {categories.map((c) => (
@@ -300,12 +298,22 @@ export default function AdminTreatmentsPage() {
               setStatusFilter(e.target.value);
               setCurrentPage(1);
             }}
-            className="px-3.5 py-2.5 rounded-xl border border-sand bg-white text-sm text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-accent/40"
+            className="flex-1 sm:flex-initial sm:w-36 px-3.5 py-2.5 rounded-xl border border-sand bg-white text-sm text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-accent/40 cursor-pointer"
           >
             <option value="all">All Status</option>
             <option value="1">Active Only</option>
             <option value="0">Inactive Only</option>
           </select>
+
+          {/* Add Treatment Button */}
+          <button
+            type="button"
+            onClick={handleOpenCreate}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent to-accent-soft text-primary text-sm font-bold shadow-gold hover:shadow-lg transition-all shrink-0 whitespace-nowrap"
+          >
+            <Plus size={18} />
+            <span>Add Treatment</span>
+          </button>
         </div>
       </div>
 
@@ -329,12 +337,14 @@ export default function AdminTreatmentsPage() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse min-w-[720px]">
               <thead>
                 <tr className="border-b border-sand bg-cream/40 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                  <th className="py-3.5 px-4 sm:px-6 w-16">ID</th>
                   <th className="py-3.5 px-4 sm:px-6">Treatment</th>
                   <th className="py-3.5 px-4">Category</th>
                   <th className="py-3.5 px-4">Duration</th>
+                  <th className="py-3.5 px-4">Price</th>
                   <th className="py-3.5 px-4">Order</th>
                   <th className="py-3.5 px-4">Status</th>
                   <th className="py-3.5 px-4 sm:px-6 text-right">Actions</th>
@@ -350,6 +360,11 @@ export default function AdminTreatmentsPage() {
 
                   return (
                     <tr key={t.id} className="hover:bg-sand/15 transition-colors">
+                      {/* ID */}
+                      <td className="py-3.5 px-4 sm:px-6 font-mono text-xs font-semibold text-slate-500">
+                        {t.id}
+                      </td>
+
                       {/* Treatment Info & Thumbnail */}
                       <td className="py-3.5 px-4 sm:px-6">
                         <div className="flex items-center gap-3">
@@ -385,6 +400,19 @@ export default function AdminTreatmentsPage() {
                           <Clock size={13} className="text-slate-400" />
                           <span>{t.duration || 'Flexible'}</span>
                         </div>
+                      </td>
+
+                      {/* Price */}
+                      <td className="py-3.5 px-4 text-slate-800 text-xs font-semibold">
+                        {t.price && Number(t.price) > 0 ? (
+                          <span className="font-mono text-primary font-bold">
+                            ₹{Number(t.price).toLocaleString('en-IN')}
+                          </span>
+                        ) : (
+                          <span className="text-slate-400 font-medium italic">
+                            Consultation
+                          </span>
+                        )}
                       </td>
 
                       {/* Order */}
@@ -538,8 +566,8 @@ export default function AdminTreatmentsPage() {
                 </div>
               </div>
 
-              {/* Category, Duration, Order & Status */}
-              <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+              {/* Category, Duration, Price, Order & Status */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
                     Category *
@@ -572,13 +600,34 @@ export default function AdminTreatmentsPage() {
 
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                    Price (₹)
+                  </label>
+                  <div className="relative">
+                    <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-sm font-semibold">
+                      ₹
+                    </span>
+                    <input
+                      type="number"
+                      min="0"
+                      value={formPrice}
+                      onChange={(e) => setFormPrice(e.target.value === '' ? '' : Math.max(0, parseInt(e.target.value, 10) || 0))}
+                      onWheel={(e) => e.target.blur()}
+                      placeholder="0 (Free)"
+                      className="w-full pl-7 pr-3 py-2.5 rounded-xl border border-sand bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-accent/40 font-mono [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
                     Display Order
                   </label>
                   <input
                     type="number"
                     value={formDisplayOrder}
                     onChange={(e) => setFormDisplayOrder(Number(e.target.value))}
-                    className="w-full px-4 py-2.5 rounded-xl border border-sand bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-accent/40"
+                    onWheel={(e) => e.target.blur()}
+                    className="w-full px-4 py-2.5 rounded-xl border border-sand bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-accent/40 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                 </div>
 

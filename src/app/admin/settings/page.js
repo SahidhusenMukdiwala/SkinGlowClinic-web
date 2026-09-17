@@ -167,7 +167,13 @@ export default function AdminSettingsPage() {
     try {
       const token = localStorage.getItem('serviceToken');
       const updated = await updateAdminSettingsApi(token, settingsMap);
-      setSettingsMap(updated.map || settingsMap);
+      const newMap = updated.map || settingsMap;
+      setSettingsMap(newMap);
+
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('settings-changed', { detail: newMap }));
+      }
+
       setStatusMsg({ type: 'success', text: 'Clinic settings updated successfully!' });
     } catch (err) {
       setStatusMsg({ type: 'error', text: err.message || 'Failed to save settings.' });
@@ -179,7 +185,7 @@ export default function AdminSettingsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      {/* <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="font-serif text-2xl sm:text-3xl font-bold text-primary">
             Clinic Site Settings
@@ -200,7 +206,7 @@ export default function AdminSettingsPage() {
             <span>{saving ? 'Saving...' : 'Save All Settings'}</span>
           </button>
         </div>
-      </div>
+      </div> */}
 
       {/* Feedback Banner */}
       {statusMsg && (
@@ -368,6 +374,20 @@ export default function AdminSettingsPage() {
                 rows={4}
                 value={settingsMap.about_text || ''}
                 onChange={(e) => handleChange('about_text', e.target.value)}
+                placeholder="Founded on the principle of delivering physician-led dermatological care..."
+                className="w-full p-4 rounded-xl border border-sand bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                Lead Doctor Bio & Clinical Background
+              </label>
+              <textarea
+                rows={4}
+                value={settingsMap.doctor_bio || ''}
+                onChange={(e) => handleChange('doctor_bio', e.target.value)}
+                placeholder="Senior Consultant Dermatologist with over 15 years of clinical practice specializing in medical dermatology..."
                 className="w-full p-4 rounded-xl border border-sand bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-none"
               />
             </div>

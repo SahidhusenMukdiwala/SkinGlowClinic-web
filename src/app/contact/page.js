@@ -10,10 +10,14 @@ import { fetchSettings } from '@/lib/api';
 import ContactForm from '@/components/contact/ContactForm';
 import SectionHeader from '@/components/common/SectionHeader';
 
-export const metadata = {
-  title: 'Contact & Clinic Location | SkinGlow Clinic Mumbai',
-  description: 'Reach out to SkinGlow Clinic in Bandra West, Mumbai. View clinic contact details, working hours, interactive inquiry form, and Google Maps location.',
-};
+export async function generateMetadata() {
+  const settings = await fetchSettings();
+  const clinicName = settings?.clinic_name || 'SkinGlow Clinic';
+  return {
+    title: `Contact & Clinic Location | ${clinicName}`,
+    description: `Reach out to ${clinicName}. View clinic contact details, working hours, interactive inquiry form, and Google Maps location.`,
+  };
+}
 
 export const revalidate = 60;
 
@@ -137,7 +141,7 @@ export default async function ContactPage() {
           <div className="rounded-2xl overflow-hidden shadow-md border border-clinic-border-subtle h-96 w-full">
             <iframe
               src={mapUrl}
-              title="SkinGlow Clinic Google Maps Location"
+              title={`${settings?.clinic_name || 'SkinGlow Clinic'} Google Maps Location`}
               className="w-full h-full border-0"
               allowFullScreen=""
               loading="lazy"
