@@ -56,9 +56,13 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           {/* Brand Column */}
           <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center text-accent shrink-0">
-                <Sparkles size={20} />
+            <Link href="/" className="inline-flex items-center gap-3 group">
+              <div className="bg-white rounded-2xl p-1.5 shadow-sm border border-white/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <img
+                  src="/skin-glow-logo.png"
+                  alt={clinicName}
+                  className="w-12 h-12 object-contain"
+                />
               </div>
               <div className="min-w-0">
                 <h3 className="font-heading text-xl font-bold tracking-tight text-white truncate">
@@ -68,7 +72,7 @@ export default function Footer() {
                   {clinicTagline}
                 </span>
               </div>
-            </div>
+            </Link>
             <p className="text-sm text-gray-300 leading-relaxed">
               {aboutNarrative}
             </p>

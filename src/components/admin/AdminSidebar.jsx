@@ -125,8 +125,12 @@ export default function AdminSidebar({ mobileOpen, onClose }) {
         {/* Brand Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
           <Link href="/admin/dashboard" className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-accent-soft flex items-center justify-center text-primary shadow-gold">
-              <Sparkles size={20} />
+            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-gold overflow-hidden p-1 shrink-0">
+              <img
+                src="/skin-glow-logo.png"
+                alt="SkinGlow Logo"
+                className="w-full h-full object-contain"
+              />
             </div>
             <div>
               <span className="font-serif text-lg font-bold tracking-tight text-white block leading-tight">

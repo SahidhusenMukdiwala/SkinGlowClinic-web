@@ -140,10 +140,13 @@ function LoginFormContent() {
       <div className="w-full max-w-lg p-8 sm:p-10 bg-white border border-sand/60 rounded-3xl shadow-xl">
         {/* Header Branding */}
         <div className="text-center mb-6">
-          <div className="badge mx-auto mb-3">
-            <Sparkles size={14} className="text-accent" />
-            <span>SkinGlow Clinic Portal</span>
-          </div>
+          <Link href="/" className="inline-block mb-2 hover:opacity-90 transition-opacity">
+            <img
+              src="/skin-glow-logo.png"
+              alt="SkinGlow Logo"
+              className="h-20 w-auto mx-auto object-contain mix-blend-multiply"
+            />
+          </Link>
           <h1 className="font-heading text-3xl font-bold text-primary mb-2">
             {mode === 'login' ? 'Welcome Back' : 'Join SkinGlow Clinic'}
           </h1>

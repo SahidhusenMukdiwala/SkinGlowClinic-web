@@ -28,11 +28,29 @@ export async function generateMetadata() {
     keywords: ['skincare', 'dermatology clinic', 'aesthetic medicine', 'laser clinic', 'anti-aging', clinicName],
     authors: [{ name: clinicName }],
     metadataBase: new URL('http://localhost:3000'),
+    icons: {
+      icon: [
+        { url: '/favicon.ico' },
+        { url: '/Skin%20Glow%20Logo.jpg' },
+      ],
+      shortcut: ['/favicon.ico'],
+      apple: [
+        { url: '/Skin%20Glow%20Logo.jpg' },
+      ],
+    },
     openGraph: {
       title: `${clinicName} | ${tagline}`,
       description: settings?.about_text || `Physician-led clinical dermatology, bespoke aesthetic enhancements, and advanced laser treatments at ${clinicName}.`,
       type: 'website',
       locale: 'en_IN',
+      images: [
+        {
+          url: '/Skin%20Glow%20Logo.jpg',
+          width: 1200,
+          height: 1200,
+          alt: clinicName,
+        },
+      ],
     },
   };
 }

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { getCurrentUser, logoutApi } from '@/lib/api';
 import { useSettings } from '@/context/SettingsContext';
+import { isAdminUser } from '@/lib/constants';
 
 const NAV_LINKS = [
   { label: 'Home', href: '/' },
@@ -98,21 +99,19 @@ export default function Navbar() {
     setMobileMenuOpen(false);
   };
 
-  const isAdminUser = currentUser && (currentUser.role === 0 || currentUser.role === 1);
+  const isUserAdmin = isAdminUser(currentUser);
 
   return (
-    <header className="sticky top-0 z-50 bg-[#FDFBF7]/95 backdrop-blur-md border-b border-primary/10 transition-all">
-      <div className="container h-20 flex items-center justify-between">
+    <>
+      <header className="sticky top-0 z-40 bg-[#FDFBF7]/95 backdrop-blur-md border-b border-primary/10 transition-all">
+        <div className="container h-20 flex items-center justify-between">
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-2.5 group cursor-pointer" onClick={closeMobileMenu}>
-          <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-accent group-hover:scale-105 transition-transform shadow-sm">
-            <Sparkles size={18} strokeWidth={2.2} />
-          </div>
-          <div className="flex flex-col">
-            <span className="font-heading text-2xl font-bold tracking-tight text-primary">
-              {settings?.clinic_name || 'SkinGlow'}
-            </span>
-          </div>
+        <Link href="/" className="flex items-center py-1 group cursor-pointer" onClick={closeMobileMenu}>
+          <img
+            src="/skin-glow-logo-transparent.png"
+            alt={settings?.clinic_name || 'SkinGlow Clinic'}
+            className="h-14 sm:h-16 w-auto object-contain group-hover:scale-105 transition-transform duration-200"
+          />
         </Link>
 
         {/* Desktop Navigation Links */}
@@ -178,14 +177,14 @@ export default function Navbar() {
                     <p className="text-xs font-bold text-primary truncate">{currentUser.full_name}</p>
                     <p className="text-[11px] text-slate-500 truncate">{currentUser.email}</p>
                     <span className={`inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-semibold ${
-                      isAdminUser ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'
+                      isUserAdmin ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'
                     }`}>
-                      {isAdminUser ? 'Administrator' : 'Patient'}
+                      {isUserAdmin ? 'Administrator' : 'Patient'}
                     </span>
                   </div>
 
                   <div className="py-1">
-                    {isAdminUser ? (
+                    {isUserAdmin ? (
                       <Link
                         href="/admin/dashboard"
                         onClick={() => setUserDropdownOpen(false)}
@@ -296,55 +295,62 @@ export default function Navbar() {
           )}
         </div>
       )}
+    </header>
 
-      {/* Sign Out Confirmation Modal */}
-      {showLogoutModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl border border-slate-100 space-y-4 animate-in fade-in zoom-in-95 duration-200">
-            <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto">
-              <LogOut size={24} />
-            </div>
+    {/* Sign Out Confirmation Modal - Rendered outside header to prevent backdrop-filter containing block trap */}
+    {showLogoutModal && (
+      <div 
+        className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
+        onClick={() => !loggingOut && setShowLogoutModal(false)}
+      >
+        <div 
+          className="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl border border-slate-100 space-y-4 animate-in fade-in zoom-in-95 duration-200"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto">
+            <LogOut size={24} />
+          </div>
 
-            <div className="text-center">
-              <h3 className="text-lg font-serif font-bold text-primary">
-                Sign Out Confirmation
-              </h3>
-              <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                Are you sure you want to sign out of your account?
-              </p>
-            </div>
+          <div className="text-center">
+            <h3 className="text-lg font-serif font-bold text-primary">
+              Sign Out Confirmation
+            </h3>
+            <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+              Are you sure you want to sign out of your account?
+            </p>
+          </div>
 
-            <div className="flex items-center justify-end gap-2.5 pt-2">
-              <button
-                type="button"
-                disabled={loggingOut}
-                onClick={() => setShowLogoutModal(false)}
-                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition disabled:opacity-50"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                disabled={loggingOut}
-                onClick={handleConfirmLogout}
-                className="px-4 py-2 text-xs font-semibold text-white bg-red-600 hover:bg-red-700 rounded-xl transition shadow-sm flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
-              >
-                {loggingOut ? (
-                  <>
-                    <Loader2 size={14} className="animate-spin" />
-                    <span>Signing Out...</span>
-                  </>
-                ) : (
-                  <>
-                    <LogOut size={14} />
-                    <span>Okay, Sign Out</span>
-                  </>
-                )}
-              </button>
-            </div>
+          <div className="flex items-center justify-end gap-2.5 pt-2">
+            <button
+              type="button"
+              disabled={loggingOut}
+              onClick={() => setShowLogoutModal(false)}
+              className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition disabled:opacity-50 cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              disabled={loggingOut}
+              onClick={handleConfirmLogout}
+              className="px-4 py-2 text-xs font-semibold text-white bg-red-600 hover:bg-red-700 rounded-xl transition shadow-sm flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
+            >
+              {loggingOut ? (
+                <>
+                  <Loader2 size={14} className="animate-spin" />
+                  <span>Signing Out...</span>
+                </>
+              ) : (
+                <>
+                  <LogOut size={14} />
+                  <span>Okay, Sign Out</span>
+                </>
+              )}
+            </button>
           </div>
         </div>
-      )}
-    </header>
-  );
+      </div>
+    )}
+  </>
+);
 }

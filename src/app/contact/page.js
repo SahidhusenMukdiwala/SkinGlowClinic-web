@@ -5,10 +5,32 @@ import {
   Mail,
   MapPin,
   Clock,
+  Share2,
 } from 'lucide-react';
 import { fetchSettings } from '@/lib/api';
 import ContactForm from '@/components/contact/ContactForm';
 import SectionHeader from '@/components/common/SectionHeader';
+
+const InstagramIcon = ({ size = 18, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+  </svg>
+);
+
+const FacebookIcon = ({ size = 18, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+  </svg>
+);
+
+const YoutubeIcon = ({ size = 18, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
+    <polygon points="10 15 15 12 10 9 10 15" />
+  </svg>
+);
 
 export async function generateMetadata() {
   const settings = await fetchSettings();
@@ -100,26 +122,57 @@ export default async function ContactPage() {
             </div>
 
             {/* Social Channels */}
-            <div className="bg-white p-5 rounded-2xl border border-clinic-border-subtle shadow-sm flex items-center justify-between flex-wrap gap-3">
-              <h4 className="font-heading text-sm font-bold text-primary">Connect on Social</h4>
-              <div className="flex items-center gap-3">
-                {settings.instagram_url && (
-                  <a href={settings.instagram_url} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-accent-hover hover:underline">
-                    Instagram ↗
-                  </a>
-                )}
-                {settings.facebook_url && (
-                  <a href={settings.facebook_url} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-accent-hover hover:underline">
-                    Facebook ↗
-                  </a>
-                )}
-                {settings.youtube_url && (
-                  <a href={settings.youtube_url} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-accent-hover hover:underline">
-                    YouTube ↗
-                  </a>
-                )}
+            {(settings.instagram_url || settings.facebook_url || settings.youtube_url) && (
+              <div className="bg-white p-5 rounded-2xl border border-clinic-border-subtle shadow-sm flex items-center justify-between flex-wrap gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-11 h-11 rounded-xl bg-accent/15 text-accent flex items-center justify-center shrink-0">
+                    <Share2 size={20} />
+                  </div>
+                  <div>
+                    <h4 className="font-heading text-base font-bold text-primary mb-0.5">Connect on Social</h4>
+                    <p className="text-xs text-clinic-muted">Follow our clinical updates & results</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  {settings.instagram_url && (
+                    <a
+                      href={settings.instagram_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Follow us on Instagram"
+                      title="Instagram"
+                      className="w-10 h-10 rounded-xl bg-accent/10 text-primary hover:bg-accent hover:text-white flex items-center justify-center transition-all duration-200 shadow-sm hover:scale-105 hover:shadow"
+                    >
+                      <InstagramIcon size={18} />
+                    </a>
+                  )}
+                  {settings.facebook_url && (
+                    <a
+                      href={settings.facebook_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Follow us on Facebook"
+                      title="Facebook"
+                      className="w-10 h-10 rounded-xl bg-accent/10 text-primary hover:bg-accent hover:text-white flex items-center justify-center transition-all duration-200 shadow-sm hover:scale-105 hover:shadow"
+                    >
+                      <FacebookIcon size={18} />
+                    </a>
+                  )}
+                  {settings.youtube_url && (
+                    <a
+                      href={settings.youtube_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Subscribe on YouTube"
+                      title="YouTube"
+                      className="w-10 h-10 rounded-xl bg-accent/10 text-primary hover:bg-accent hover:text-white flex items-center justify-center transition-all duration-200 shadow-sm hover:scale-105 hover:shadow"
+                    >
+                      <YoutubeIcon size={18} />
+                    </a>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Right Column: Contact Inquiry Form */}
