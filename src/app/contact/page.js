@@ -10,6 +10,8 @@ import {
 import { fetchSettings } from '@/lib/api';
 import ContactForm from '@/components/contact/ContactForm';
 import SectionHeader from '@/components/common/SectionHeader';
+import JsonLd from '@/components/seo/JsonLd';
+import { getLocalBusinessSchema, getBreadcrumbSchema } from '@/lib/seo/schemas';
 
 const InstagramIcon = ({ size = 18, className = '' }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -34,10 +36,46 @@ const YoutubeIcon = ({ size = 18, className = '' }) => (
 
 export async function generateMetadata() {
   const settings = await fetchSettings();
-  const clinicName = settings?.clinic_name || 'SkinGlow Clinic';
+  const clinicName = settings?.clinic_name || 'Skin Glow Clinic';
+  const title = `Contact Skin Glow Clinic in Himmatnagar, Gujarat | Phone & Address`;
+  const description = `Get in touch with ${clinicName} in Himmatnagar, Gujarat. Clinic address, contact phone number, consultation hours, and online inquiry form.`;
+
   return {
-    title: `Contact & Clinic Location | ${clinicName}`,
-    description: `Reach out to ${clinicName}. View clinic contact details, working hours, interactive inquiry form, and Google Maps location.`,
+    title,
+    description,
+    keywords: [
+      'skin glow clinic Himmatnagar contact',
+      'skin clinic near me Himmatnagar',
+      'skin glow clinic phone number',
+      'dermatologist contact Himmatnagar',
+      'skin doctor address Gujarat',
+      clinicName,
+    ],
+    alternates: {
+      canonical: '/contact',
+    },
+    openGraph: {
+      title,
+      description,
+      url: '/contact',
+      siteName: clinicName,
+      locale: 'en_IN',
+      type: 'website',
+      images: [
+        {
+          url: '/Skin%20Glow%20Logo.jpg',
+          width: 1200,
+          height: 630,
+          alt: `Contact ${clinicName} — Himmatnagar`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['/Skin%20Glow%20Logo.jpg'],
+    },
   };
 }
 
@@ -48,12 +86,19 @@ export default async function ContactPage() {
 
   const cleanPhone = (settings.phone || '+91 98201 23456').replace(/\s+/g, '');
   const cleanEmail = settings.email || 'contact@skinglow.com';
-  const cleanAddress = settings.address || 'Suite 402, Radiant Medical Enclave, Linking Road, Bandra West, Mumbai 400050';
+  const cleanAddress = settings.address || 'Opp. Civil Hospital, Post Office Road, Himmatnagar, Gujarat 383001';
   const cleanHours = settings.working_hours || 'Monday – Saturday: 10:00 AM – 7:30 PM | Sunday: By Appointment';
-  const mapUrl = settings.map_embed_url || 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3771.045610815918!2d72.83151837599026!3d19.06173005241031!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c91130392bc7%3A0x63351d3b0b5e9f89!2sLinking%20Rd%2C%20Bandra%20West%2C%20Mumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin';
+  const mapUrl = settings.map_embed_url || 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3655.432658145826!2d72.96286047589886!3d23.596924978777174!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395df3d0a6409b3d%3A0x8673752e008b8b0e!2sCivil%20Hospital%20Himmatnagar!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin';
+
+  const localBusinessSchema = getLocalBusinessSchema(settings);
+  const breadcrumbSchema = getBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Contact', url: '/contact' },
+  ]);
 
   return (
     <div className="min-h-screen bg-clinic-bg pb-20">
+      <JsonLd data={[localBusinessSchema, breadcrumbSchema]} />
       {/* Header Banner */}
       <header className="py-16 text-center bg-gradient-to-b from-primary/5 via-clinic-bg to-clinic-bg border-b border-clinic-border-subtle mb-16">
         <div className="container">
@@ -62,10 +107,13 @@ export default async function ContactPage() {
             <span>Connect With Us</span>
           </div>
           <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-primary font-bold mb-4">
-            Get In Touch With Our Clinical Team
+            Contact Skin Glow Clinic — <br className="hidden sm:inline" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent via-accent-soft to-accent-hover">
+              Himmatnagar, Gujarat
+            </span>
           </h1>
           <p className="text-sm sm:text-base text-clinic-muted max-w-2xl mx-auto leading-relaxed">
-            Whether you are booking your first consultation, inquiring about a specialized laser procedure, or seeking follow-up guidance, our team is here to assist you.
+            Whether you are booking your first consultation, inquiring about a specialized laser procedure, or visiting our clinic in Himmatnagar, Gujarat, our team is here to assist you.
           </p>
         </div>
       </header>

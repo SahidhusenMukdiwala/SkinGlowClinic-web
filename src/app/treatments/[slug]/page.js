@@ -5,6 +5,8 @@ import { notFound } from 'next/navigation';
 import { Clock, Calendar, Sparkles, CheckCircle2, PhoneCall } from 'lucide-react';
 import { fetchTreatmentBySlug, fetchSettings } from '@/lib/api';
 import { CATEGORY_MAP } from '@/lib/constants';
+import JsonLd from '@/components/seo/JsonLd';
+import { getMedicalProcedureSchema, getBreadcrumbSchema } from '@/lib/seo/schemas';
 
 export const revalidate = 60;
 
@@ -13,7 +15,7 @@ export async function generateMetadata({ params }) {
     fetchTreatmentBySlug(params.slug),
     fetchSettings(),
   ]);
-  const clinicName = settings?.clinic_name || 'SkinGlow Clinic';
+  const clinicName = settings?.clinic_name || 'Skin Glow Clinic';
   if (!data || !data.treatment) {
     return {
       title: `Treatment Not Found | ${clinicName}`,
@@ -21,9 +23,49 @@ export async function generateMetadata({ params }) {
   }
 
   const { treatment } = data;
+  const title = `${treatment.title} in Himmatnagar | ${clinicName}`;
+  const description = treatment.short_description
+    ? `${treatment.short_description} Available at ${clinicName}, Himmatnagar, Gujarat.`
+    : `Learn about ${treatment.title} at ${clinicName} in Himmatnagar, Gujarat. Physician-led clinical dermatology and advanced aesthetic care.`;
+  const image = treatment.image_url || '/Skin%20Glow%20Logo.jpg';
+
   return {
-    title: `${treatment.title} | ${clinicName}`,
-    description: treatment.short_description || `Learn about ${treatment.title} at ${clinicName}. Physician-led dermatology and laser aesthetics.`,
+    title,
+    description,
+    keywords: [
+      treatment.title,
+      `${treatment.title} Himmatnagar`,
+      `${treatment.title} cost Gujarat`,
+      `best ${treatment.title} clinic`,
+      'Himmatnagar skin treatment',
+      'dermatologist Himmatnagar',
+      clinicName,
+    ],
+    alternates: {
+      canonical: `/treatments/${treatment.slug}`,
+    },
+    openGraph: {
+      title,
+      description,
+      url: `/treatments/${treatment.slug}`,
+      siteName: clinicName,
+      locale: 'en_IN',
+      type: 'website',
+      images: [
+        {
+          url: image,
+          width: 1200,
+          height: 630,
+          alt: `${treatment.title} at ${clinicName} — Himmatnagar`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [image],
+    },
   };
 }
 
@@ -92,8 +134,16 @@ export default async function TreatmentDetailPage({ params }) {
     });
   };
 
+  const medicalProcedureSchema = getMedicalProcedureSchema(treatment);
+  const breadcrumbSchema = getBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Treatments', url: '/treatments' },
+    { name: treatment.title, url: `/treatments/${treatment.slug}` },
+  ]);
+
   return (
     <div className="min-h-screen bg-clinic-bg pb-20">
+      <JsonLd data={[medicalProcedureSchema, breadcrumbSchema]} />
       {/* Breadcrumbs */}
       <div className="bg-clinic-bg-alt/50 border-b border-clinic-border-subtle py-3 text-xs sm:text-sm text-clinic-muted">
         <div className="container flex items-center gap-2">
@@ -126,13 +176,16 @@ export default async function TreatmentDetailPage({ params }) {
                   : 'Consultation Included'}
               </span>
             </div>
+            <div className="badge bg-emerald-50 text-emerald-800 border-emerald-200">
+              <span>Available at our Himmatnagar clinic</span>
+            </div>
           </div>
 
           <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-primary font-bold mb-3">
             {treatment.title}
           </h1>
           <p className="text-base sm:text-lg text-clinic-muted max-w-3xl leading-relaxed">
-            {treatment.short_description}
+            {treatment.short_description} Available at our specialized dermatology facility in Himmatnagar, Gujarat.
           </p>
         </div>
       </header>
@@ -145,7 +198,7 @@ export default async function TreatmentDetailPage({ params }) {
             <div className="relative rounded-2xl overflow-hidden shadow-md border border-clinic-border-subtle">
               <Image
                 src={treatment.image_url || 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=1200&q=80'}
-                alt={treatment.title}
+                alt={`${treatment.title} treatment at Skin Glow Clinic Himmatnagar`}
                 width={800}
                 height={440}
                 priority
@@ -163,10 +216,10 @@ export default async function TreatmentDetailPage({ params }) {
               <CheckCircle2 size={24} className="text-emerald-500 shrink-0 mt-0.5" />
               <div>
                 <h4 className="font-heading text-base font-bold text-primary mb-1">
-                  {settings?.clinic_name || 'SkinGlow'} Clinical Safety Assurance
+                  {settings?.clinic_name || 'Skin Glow Clinic'} — Himmatnagar, Gujarat
                 </h4>
                 <p className="text-xs sm:text-sm text-clinic-muted leading-relaxed">
-                  This procedure is administered exclusively using sterile medical disposables and US-FDA cleared clinical equipment under the direct supervision of Board-Certified dermatologists.
+                  Available at our Himmatnagar clinic. This procedure is administered exclusively using sterile medical disposables and US-FDA cleared clinical equipment under the direct supervision of Board-Certified dermatologists for patients across Gujarat.
                 </p>
               </div>
             </div>
@@ -234,7 +287,7 @@ export default async function TreatmentDetailPage({ params }) {
                     >
                       <Image
                         src={item.image_url || 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=200&q=80'}
-                        alt={item.title}
+                        alt={`${item.title} at Skin Glow Clinic Himmatnagar`}
                         width={52}
                         height={52}
                         className="w-13 h-13 rounded-lg object-cover"

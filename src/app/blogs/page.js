@@ -4,14 +4,54 @@ import Image from 'next/image';
 import { Sparkles, Calendar, Clock, ArrowRight, User, BookOpen, Search } from 'lucide-react';
 import { fetchBlogs, fetchSettings } from '@/lib/api';
 import SectionHeader from '@/components/common/SectionHeader';
+import JsonLd from '@/components/seo/JsonLd';
+import { getBreadcrumbSchema } from '@/lib/seo/schemas';
 
 export async function generateMetadata() {
   const settings = await fetchSettings();
-  const clinicName = settings?.clinic_name || 'SkinGlow Clinic';
-  const doctorName = settings?.doctor_name || 'our doctor';
+  const clinicName = settings?.clinic_name || 'Skin Glow Clinic';
+  const doctorName = settings?.doctor_name || 'Dr. Aisha Sharma';
+  const title = `Dermatology & Skin Care Blog | ${clinicName} — Himmatnagar`;
+  const description = `Evidence-based clinical skincare tips, laser treatment guides, and dermatology advice by ${doctorName} at ${clinicName}, Himmatnagar, Gujarat.`;
+
   return {
-    title: `Clinical Skincare Blogs & Dermatological Insights | ${clinicName}`,
-    description: `Evidence-based skincare advice, breakthrough aesthetic procedures, and clinical guides written by ${doctorName} at ${clinicName}.`,
+    title,
+    description,
+    keywords: [
+      'skin care tips',
+      'dermatology blog',
+      'skin care advice Himmatnagar',
+      'skin health tips Gujarat',
+      'laser treatment guide',
+      'acne care tips',
+      doctorName,
+      clinicName,
+    ],
+    alternates: {
+      canonical: '/blogs',
+    },
+    openGraph: {
+      title,
+      description,
+      url: '/blogs',
+      siteName: clinicName,
+      locale: 'en_IN',
+      type: 'website',
+      images: [
+        {
+          url: '/Skin%20Glow%20Logo.jpg',
+          width: 1200,
+          height: 630,
+          alt: `Skincare Insights from ${clinicName} — Himmatnagar`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['/Skin%20Glow%20Logo.jpg'],
+    },
   };
 }
 
@@ -46,8 +86,14 @@ export default async function BlogsPage({ searchParams }) {
     return html.replace(/<[^>]*>?/gm, '').slice(0, 160) + '...';
   };
 
+  const breadcrumbSchema = getBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Blogs & Insights', url: '/blogs' },
+  ]);
+
   return (
     <div className="min-h-screen bg-clinic-bg pb-24">
+      <JsonLd data={breadcrumbSchema} />
       {/* Header Banner */}
       <header className="py-16 lg:py-20 text-center bg-gradient-to-b from-primary/5 via-clinic-bg to-clinic-bg border-b border-clinic-border-subtle">
         <div className="container max-w-4xl mx-auto px-4">
@@ -56,9 +102,9 @@ export default async function BlogsPage({ searchParams }) {
             <span>Physician-Authored Skincare Education</span>
           </div>
           <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl text-primary font-bold tracking-tight mb-5 leading-tight">
-            Clinical Insights & <br className="hidden sm:inline" />
+            Skin Care Tips & Dermatology Blog — <br className="hidden sm:inline" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent via-accent-soft to-accent-hover">
-              Dermatological Breakthroughs
+              Skin Glow Clinic
             </span>
           </h1>
           <p className="text-base sm:text-lg text-clinic-muted max-w-2xl mx-auto leading-relaxed">
@@ -83,7 +129,7 @@ export default async function BlogsPage({ searchParams }) {
               <div className="lg:col-span-7 relative h-72 sm:h-96 w-full rounded-2xl overflow-hidden bg-slate-100">
                 <Image
                   src={featuredBlog.cover_image || 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=1200&q=80'}
-                  alt={featuredBlog.title}
+                  alt={`${featuredBlog.title} — Clinical guide by Skin Glow Clinic Himmatnagar`}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                   priority
@@ -123,7 +169,7 @@ export default async function BlogsPage({ searchParams }) {
                     <div className="w-10 h-10 rounded-full bg-accent/15 border border-accent/30 flex items-center justify-center text-primary font-bold text-sm overflow-hidden">
                       {settings?.doctor_image ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={settings.doctor_image} alt={settings.doctor_name || 'Doctor'} className="w-full h-full object-cover" />
+                        <img src={settings.doctor_image} alt={`${settings.doctor_name || 'Dr. Aisha Sharma'} — Dermatologist at Skin Glow Clinic Himmatnagar`} className="w-full h-full object-cover" />
                       ) : (
                         (settings?.doctor_name || 'Dr').split(' ').map(n => n[0]).slice(0, 2).join('')
                       )}
@@ -172,7 +218,7 @@ export default async function BlogsPage({ searchParams }) {
                   <Link href={`/blogs/${blog.slug}`} className="relative h-56 w-full overflow-hidden bg-slate-100 block">
                     <Image
                       src={blog.cover_image || 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80'}
-                      alt={blog.title}
+                      alt={`${blog.title} — Dermatology article from Skin Glow Clinic Himmatnagar`}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
@@ -213,7 +259,7 @@ export default async function BlogsPage({ searchParams }) {
                         <div className="w-7 h-7 rounded-full bg-accent/15 flex items-center justify-center text-primary text-xs font-bold overflow-hidden">
                           {settings?.doctor_image ? (
                             // eslint-disable-next-line @next/next/no-img-element
-                            <img src={settings.doctor_image} alt={settings.doctor_name || 'Doctor'} className="w-full h-full object-cover" />
+                            <img src={settings.doctor_image} alt={`${settings.doctor_name || 'Dr. Aisha Sharma'} — Dermatologist at Skin Glow Clinic Himmatnagar`} className="w-full h-full object-cover" />
                           ) : (
                             (settings?.doctor_name || 'Dr').split(' ').map(n => n[0]).slice(0, 2).join('')
                           )}

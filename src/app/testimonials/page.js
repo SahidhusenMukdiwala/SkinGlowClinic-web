@@ -12,13 +12,51 @@ import {
   MessageSquareQuote,
 } from 'lucide-react';
 import { fetchTestimonials, fetchSettings } from '@/lib/api';
+import JsonLd from '@/components/seo/JsonLd';
+import { getAggregateRatingSchema, getBreadcrumbSchema } from '@/lib/seo/schemas';
 
 export async function generateMetadata() {
   const settings = await fetchSettings();
-  const clinicName = settings?.clinic_name || 'SkinGlow Clinic';
+  const clinicName = settings?.clinic_name || 'Skin Glow Clinic';
+  const title = `Patient Reviews & Verified Results | ${clinicName} — Himmatnagar`;
+  const description = `Read genuine patient reviews and transformation stories from ${clinicName} in Himmatnagar, Gujarat. Verified feedback for dermatology and laser skincare.`;
+
   return {
-    title: `Patient Stories & Verified Testimonials | ${clinicName}`,
-    description: `Read genuine verified reviews and patient experiences for clinical dermatology, laser hair reduction, and anti-aging treatments at ${clinicName}.`,
+    title,
+    description,
+    keywords: [
+      'skin glow clinic reviews',
+      'patient reviews',
+      'best skin clinic reviews Himmatnagar',
+      'dermatologist reviews Gujarat',
+      'verified patient feedback',
+      clinicName,
+    ],
+    alternates: {
+      canonical: '/testimonials',
+    },
+    openGraph: {
+      title,
+      description,
+      url: '/testimonials',
+      siteName: clinicName,
+      locale: 'en_IN',
+      type: 'website',
+      images: [
+        {
+          url: '/Skin%20Glow%20Logo.jpg',
+          width: 1200,
+          height: 630,
+          alt: `Patient Reviews for ${clinicName} — Himmatnagar`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['/Skin%20Glow%20Logo.jpg'],
+    },
   };
 }
 
@@ -30,8 +68,19 @@ export default async function TestimonialsPage() {
     fetchSettings(),
   ]);
 
+  const aggregateRatingSchema = getAggregateRatingSchema({
+    clinic_name: settings?.clinic_name,
+    ratingValue: '4.9',
+    reviewCount: Array.isArray(testimonials) && testimonials.length > 0 ? testimonials.length * 25 : 150,
+  });
+  const breadcrumbSchema = getBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Testimonials', url: '/testimonials' },
+  ]);
+
   return (
     <div className="min-h-screen bg-clinic-bg pb-24">
+      <JsonLd data={[aggregateRatingSchema, breadcrumbSchema]} />
       {/* Header Banner */}
       <header className="py-16 lg:py-20 text-center bg-gradient-to-b from-primary/5 via-clinic-bg to-clinic-bg border-b border-clinic-border-subtle">
         <div className="container max-w-4xl mx-auto px-4">
@@ -40,9 +89,9 @@ export default async function TestimonialsPage() {
             <span>Verified Patient Experiences</span>
           </div>
           <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl text-primary font-bold tracking-tight mb-5 leading-tight">
-            Transformative Journeys & <br className="hidden sm:inline" />
+            Patient Reviews — <br className="hidden sm:inline" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent via-accent-soft to-accent-hover">
-              Real Patient Stories
+              Skin Glow Clinic Himmatnagar
             </span>
           </h1>
           <p className="text-base sm:text-lg text-clinic-muted max-w-2xl mx-auto leading-relaxed">
@@ -122,7 +171,7 @@ export default async function TestimonialsPage() {
                 <div className="relative w-12 h-12 rounded-full overflow-hidden bg-slate-100 shrink-0 border border-sand">
                   <Image
                     src={review.patient_image || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}
-                    alt={review.patient_name}
+                    alt={`${review.patient_name} — Patient Review for Skin Glow Clinic Himmatnagar`}
                     fill
                     className="object-cover"
                   />

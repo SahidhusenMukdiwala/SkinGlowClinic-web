@@ -16,6 +16,31 @@ import dynamic from 'next/dynamic';
 import { fetchSettings, fetchTreatments, fetchTestimonials } from '@/lib/api';
 import SectionHeader from '@/components/common/SectionHeader';
 import HomeServicesTabs from '@/components/home/HomeServicesTabs';
+import JsonLd from '@/components/seo/JsonLd';
+import { getLocalBusinessSchema, getFAQSchema, getBreadcrumbSchema } from '@/lib/seo/schemas';
+
+const HOME_FAQS = [
+  {
+    question: 'How do I know which treatment is right for my unique skin concern?',
+    answer: 'Every journey begins with an in-depth dermatological consultation. Our lead dermatologist evaluates your skin barrier, hydration levels, pore congestion, and pigmentation using clinical imaging before tailoring a personalized, safe treatment protocol in Himmatnagar.',
+  },
+  {
+    question: 'What is the recovery time or downtime for laser and chemical peel treatments?',
+    answer: 'Most of our signature therapies, such as HydraFacial Elite MD and Carbon Spectra Laser Toning, have zero downtime — you can immediately return to your normal routine with instant radiance. For deeper peels or resurfacing lasers, mild redness or fine flaking resolves within 3 to 5 days.',
+  },
+  {
+    question: 'Are treatments safe for sensitive skin and deeper Indian skin tones?',
+    answer: 'Absolutely. We specialize in Fitzpatrick Skin Types III to VI. Our triple-wavelength lasers and medical peel formulations are clinically calibrated to eliminate risks of post-inflammatory hyperpigmentation while delivering superior aesthetic outcomes.',
+  },
+  {
+    question: 'How many sessions will I need to see significant, lasting results?',
+    answer: 'While immediate luminosity is visible after a single HydraFacial or Laser Toning session, structural improvements (such as acne scar remodeling, pigmentation fading, or hair follicle bio-restoration) typically involve a customized sequence of 3 to 6 sessions spaced 3 to 4 weeks apart.',
+  },
+  {
+    question: 'Are anti-wrinkle injections and dermal fillers painful or unnatural looking?',
+    answer: 'We believe in subtle, undetectable enhancement. Using topical anaesthetic creams, micro-fine needles, and FDA-approved products, procedures are virtually painless. Our clinical philosophy prioritizes natural facial harmony — never an overfilled or frozen appearance.',
+  },
+];
 
 const HomeTestimonials = dynamic(() => import('@/components/home/HomeTestimonials'), {
   loading: () => (
@@ -39,6 +64,55 @@ const HomeFAQ = dynamic(() => import('@/components/home/HomeFAQ'), {
 
 export const revalidate = 60;
 
+export async function generateMetadata() {
+  const settings = await fetchSettings();
+  const clinicName = settings?.clinic_name || 'Skin Glow Clinic';
+  const title = `Best Skin Care Clinic in Himmatnagar, Gujarat | ${clinicName}`;
+  const description = settings?.about_text || `Experience premier physician-led clinical dermatology, advanced laser treatments, and aesthetic skincare at ${clinicName} in Himmatnagar, Gujarat. Book your consultation today.`;
+
+  return {
+    title,
+    description,
+    keywords: [
+      'skin glow clinic',
+      'skin care clinic Himmatnagar',
+      'best dermatologist in Himmatnagar',
+      'skin doctor near me Gujarat',
+      'laser clinic Himmatnagar',
+      'dermatology clinic Gujarat',
+      'Sabarkantha skin specialist',
+      'acne treatment Himmatnagar',
+      'anti aging clinic Gujarat',
+      clinicName,
+    ],
+    alternates: {
+      canonical: '/',
+    },
+    openGraph: {
+      title,
+      description,
+      url: '/',
+      siteName: clinicName,
+      locale: 'en_IN',
+      type: 'website',
+      images: [
+        {
+          url: '/Skin%20Glow%20Logo.jpg',
+          width: 1200,
+          height: 630,
+          alt: `${clinicName} — Himmatnagar, Gujarat`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['/Skin%20Glow%20Logo.jpg'],
+    },
+  };
+}
+
 export default async function HomePage() {
   const [settings, treatments, testimonials] = await Promise.all([
     fetchSettings(),
@@ -46,8 +120,13 @@ export default async function HomePage() {
     fetchTestimonials(),
   ]);
 
+  const localBusinessSchema = getLocalBusinessSchema(settings);
+  const faqSchema = getFAQSchema(HOME_FAQS);
+  const breadcrumbSchema = getBreadcrumbSchema([{ name: 'Home', url: '/' }]);
+
   return (
     <>
+      <JsonLd data={[localBusinessSchema, faqSchema, breadcrumbSchema]} />
       {/* 1. Hero Section */}
       <section className="relative py-12 lg:py-20 bg-gradient-to-b from-primary/5 via-clinic-bg to-clinic-bg overflow-hidden">
         <div className="container">
@@ -56,19 +135,20 @@ export default async function HomePage() {
             <div className="lg:col-span-7 flex flex-col items-start">
               <div className="badge mb-4">
                 <Sparkles size={14} />
-                <span>Physician-Led Medical Aesthetics</span>
+                <span>Premier Skin Care in Himmatnagar, Gujarat</span>
               </div>
 
               <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl text-primary font-bold tracking-tight leading-[1.15] mb-6">
-                Reveal Your Skin’s <br />
+                Skin Glow Clinic — <br className="hidden sm:inline" />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent via-accent-soft to-accent-hover">
-                  Radiant Perfection
+                  Best Skin Care in Himmatnagar, Gujarat
                 </span>
               </h1>
 
               <p className="text-base sm:text-lg text-clinic-muted leading-relaxed max-w-xl mb-8">
-                {settings.clinic_tagline || settings.about_text ||
-                  'At SkinGlow Clinic, we blend cutting-edge medical dermatology with artistic aesthetic techniques. Our bespoke treatments restore balance, enhance radiance, and celebrate your natural skin health.'}
+                {settings.clinic_tagline
+                  ? `${settings.clinic_tagline}. Experience bespoke dermatological enhancements and advanced laser treatments in Himmatnagar.`
+                  : 'At Skin Glow Clinic in Himmatnagar, Gujarat, we blend cutting-edge medical dermatology with artistic aesthetic techniques. Our bespoke treatments restore balance, enhance radiance, and celebrate your natural skin health.'}
               </p>
 
               <div className="flex items-center gap-4 flex-wrap mb-10">
@@ -103,7 +183,7 @@ export default async function HomePage() {
             <div className="lg:col-span-5 relative rounded-2xl overflow-hidden shadow-lg border border-clinic-border-subtle">
               <Image
                 src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1200&q=80"
-                alt="SkinGlow Clinic Treatment Room"
+                alt="Skin Glow Clinic — Premier dermatology clinic in Himmatnagar, Gujarat"
                 width={600}
                 height={480}
                 priority
@@ -196,7 +276,7 @@ export default async function HomePage() {
             <div className="lg:col-span-5 relative rounded-2xl overflow-hidden shadow-md">
               <Image
                 src={settings.doctor_image || settings.doctor_profile_image || "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=1000&q=80"}
-                alt={settings.doctor_name || 'Dr. Aisha Sharma'}
+                alt={`${settings.doctor_name || 'Dr. Aisha Sharma'} — Skin specialist and dermatologist in Himmatnagar`}
                 width={500}
                 height={520}
                 className="w-full h-auto object-cover"
@@ -286,7 +366,7 @@ export default async function HomePage() {
                 Ready to Experience Physician-Led Skincare?
               </h2>
               <p className="text-sm sm:text-base text-gray-300 leading-relaxed">
-                Take the first step toward lasting skin health. Schedule your in-depth diagnostic consultation with {settings.doctor_name || 'our lead specialist'} today.
+                Take the first step toward lasting skin health. Schedule your in-depth diagnostic consultation with {settings.doctor_name || 'our lead specialist'} at our clinic in Himmatnagar, Gujarat today.
               </p>
             </div>
 

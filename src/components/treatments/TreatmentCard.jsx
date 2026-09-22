@@ -15,7 +15,7 @@ export default function TreatmentCard({ treatment }) {
       <div className="relative w-full h-52 overflow-hidden bg-clinic-bg-alt">
         <Image
           src={treatment.image_url || 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=1000&q=80'}
-          alt={treatment.title}
+          alt={`${treatment.title} treatment at Skin Glow Clinic Himmatnagar`}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="object-cover group-hover:scale-105 transition-transform duration-500"

@@ -109,7 +109,7 @@ export default function Navbar() {
         <Link href="/" className="flex items-center py-1 group cursor-pointer" onClick={closeMobileMenu}>
           <img
             src="/skin-glow-logo-transparent.png"
-            alt={settings?.clinic_name || 'SkinGlow Clinic'}
+            alt={`${settings?.clinic_name || 'Skin Glow Clinic'} — Dermatology & Laser Clinic in Himmatnagar, Gujarat`}
             className="h-14 sm:h-16 w-auto object-contain group-hover:scale-105 transition-transform duration-200"
           />
         </Link>

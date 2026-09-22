@@ -13,14 +13,54 @@ import {
 } from 'lucide-react';
 import { fetchSettings } from '@/lib/api';
 import SectionHeader from '@/components/common/SectionHeader';
+import JsonLd from '@/components/seo/JsonLd';
+import { getBreadcrumbSchema } from '@/lib/seo/schemas';
 
 export async function generateMetadata() {
   const settings = await fetchSettings();
-  const clinicName = settings?.clinic_name || 'SkinGlow Clinic';
+  const clinicName = settings?.clinic_name || 'Skin Glow Clinic';
   const doctorName = settings?.doctor_name || 'Dr. Aisha Sharma';
+  const title = `Best Dermatologist & Skin Specialist in Himmatnagar | ${clinicName}`;
+  const description = `Learn about ${clinicName} in Himmatnagar, Gujarat. Meet ${doctorName}, specialized in clinical dermatology, laser aesthetics, and advanced skin care treatments.`;
+
   return {
-    title: `About Our Clinic & Physicians | ${clinicName}`,
-    description: `Learn about ${clinicName}, our founding philosophy, ${doctorName}, and our state-of-the-art dermatological equipment.`,
+    title,
+    description,
+    keywords: [
+      'skin specialist Himmatnagar',
+      'dermatologist Himmatnagar',
+      'best skin doctor in Himmatnagar Gujarat',
+      doctorName,
+      clinicName,
+      'skin clinic Sabarkantha',
+      'clinical dermatology Himmatnagar',
+      'aesthetic doctor Gujarat',
+    ],
+    alternates: {
+      canonical: '/about',
+    },
+    openGraph: {
+      title,
+      description,
+      url: '/about',
+      siteName: clinicName,
+      locale: 'en_IN',
+      type: 'website',
+      images: [
+        {
+          url: settings?.about_image || '/Skin%20Glow%20Logo.jpg',
+          width: 1200,
+          height: 630,
+          alt: `About ${clinicName} — Himmatnagar`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [settings?.about_image || '/Skin%20Glow%20Logo.jpg'],
+    },
   };
 }
 
@@ -28,9 +68,14 @@ export const revalidate = 60;
 
 export default async function AboutPage() {
   const settings = await fetchSettings();
+  const breadcrumbSchema = getBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'About Us', url: '/about' },
+  ]);
 
   return (
     <div className="min-h-screen bg-clinic-bg">
+      <JsonLd data={breadcrumbSchema} />
       {/* Header Banner */}
       <header className="py-16 text-center bg-gradient-to-b from-primary/5 via-clinic-bg to-clinic-bg border-b border-clinic-border-subtle mb-16">
         <div className="container">
@@ -39,7 +84,10 @@ export default async function AboutPage() {
             <span>Our Clinical Heritage</span>
           </div>
           <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-primary font-bold mb-4">
-            Science Meets Aesthetic Artistry
+            About Skin Glow Clinic — <br className="hidden sm:inline" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent via-accent-soft to-accent-hover">
+              Trusted Dermatologists in Himmatnagar
+            </span>
           </h1>
           <p className="text-sm sm:text-base text-clinic-muted max-w-2xl mx-auto leading-relaxed">
             Dedicated to empowering your skin health through rigorous evidence-based dermatology, compassionate physician counsel, and bespoke clinical solutions.
@@ -61,10 +109,10 @@ export default async function AboutPage() {
               </h2>
               <p className="text-sm sm:text-base text-clinic-muted leading-relaxed">
                 {settings.about_text ||
-                  'Founded on the principle that true skin radiance is an outcome of profound cellular health, SkinGlow Clinic offers an elevated sanctuary for advanced dermatological care in Mumbai.'}
+                  'Founded on the principle that true skin radiance is an outcome of profound cellular health, Skin Glow Clinic offers an elevated sanctuary for advanced clinical dermatology and laser aesthetics in Himmatnagar, Gujarat. Serving patients across the Sabarkantha district and North Gujarat, our practice brings world-class dermatological science directly to the local community.'}
               </p>
               <p className="text-sm sm:text-base text-clinic-muted leading-relaxed">
-                We depart from conventional beauty spas by providing purely physician-led medical interventions. Every laser pulse, chemical formulation, and injectable protocol is calibrated to your skin’s unique biological requirements.
+                At our Himmatnagar clinic, we depart from conventional beauty spas by providing purely physician-led medical interventions. Every laser pulse, chemical formulation, and injectable protocol is calibrated to your skin’s unique biological requirements.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 w-full">
@@ -90,7 +138,7 @@ export default async function AboutPage() {
             <div className="lg:col-span-5 rounded-2xl overflow-hidden shadow-lg border border-clinic-border-subtle">
               <Image
                 src={settings.about_image || 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1200&q=80'}
-                alt={`${settings.clinic_name || 'SkinGlow'} Clinic Facilities`}
+                alt={`${settings.clinic_name || 'Skin Glow Clinic'} — Advanced dermatology and aesthetic facility in Himmatnagar, Gujarat`}
                 width={600}
                 height={460}
                 className="w-full h-auto object-cover"
@@ -107,7 +155,7 @@ export default async function AboutPage() {
             <div className="lg:col-span-5 rounded-2xl overflow-hidden shadow-md">
               <Image
                 src={settings.doctor_image || settings.doctor_profile_image || "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=1000&q=80"}
-                alt={settings.doctor_name || 'Lead Specialist'}
+                alt={`${settings.doctor_name || 'Dr. Aisha Sharma'} — Dermatologist and founder of Skin Glow Clinic Himmatnagar`}
                 width={500}
                 height={500}
                 className="w-full h-auto object-cover"

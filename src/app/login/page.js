@@ -143,7 +143,7 @@ function LoginFormContent() {
           <Link href="/" className="inline-block mb-2 hover:opacity-90 transition-opacity">
             <img
               src="/skin-glow-logo.png"
-              alt="SkinGlow Logo"
+              alt="Skin Glow Clinic — Dermatology & Laser Clinic in Himmatnagar"
               className="h-20 w-auto mx-auto object-contain mix-blend-multiply"
             />
           </Link>

@@ -30,14 +30,14 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
   const { settings } = useSettings();
 
-  const clinicName = settings?.clinic_name || 'SkinGlow Clinic';
-  const clinicTagline = settings?.clinic_tagline || 'Aesthetic & Dermatology';
+  const clinicName = settings?.clinic_name || 'Skin Glow Clinic';
+  const clinicTagline = settings?.clinic_tagline || 'Skin Care Clinic in Himmatnagar, Gujarat';
   const aboutNarrative =
     settings?.about_text ||
-    'Experience physician-led aesthetic care, advanced laser therapies, and bespoke dermatological solutions designed to nourish your skin and elevate your confidence.';
+    'Experience physician-led clinical dermatology, advanced laser therapies, and bespoke aesthetic solutions at Skin Glow Clinic in Himmatnagar, Gujarat.';
   const address =
     settings?.address ||
-    'Suite 402, Royal Palms Avenue, Linking Road, Bandra West, Mumbai 400050';
+    'Opp. Civil Hospital, Post Office Road, Himmatnagar, Gujarat 383001';
   const phone = settings?.phone || '+91 98201 23456';
   const cleanPhone = phone.replace(/[^\d+]/g, '');
   const email = settings?.email || 'contact@skinglow.com';
@@ -60,7 +60,7 @@ export default function Footer() {
               <div className="bg-white rounded-2xl p-1.5 shadow-sm border border-white/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                 <img
                   src="/skin-glow-logo.png"
-                  alt={clinicName}
+                  alt={`${clinicName} — Dermatology & Laser Clinic in Himmatnagar, Gujarat`}
                   className="w-12 h-12 object-contain"
                 />
               </div>
@@ -216,7 +216,7 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-400">
-          <p>© {currentYear} {clinicName}. All rights reserved.</p>
+          <p>© {currentYear} {clinicName} — Himmatnagar, Gujarat. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <Link href="/contact" className="hover:text-accent transition-colors">Inquiries</Link>
             <Link href="/treatments" className="hover:text-accent transition-colors">Procedures</Link>

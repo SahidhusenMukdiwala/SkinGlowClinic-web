@@ -1,6 +1,7 @@
 import { Playfair_Display, Inter } from 'next/font/google';
 import '@/styles/globals.css';
 import ConditionalPublicLayout from '@/components/layout/ConditionalPublicLayout';
+import GoogleAnalytics from '@/components/seo/GoogleAnalytics';
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -22,12 +23,35 @@ export async function generateMetadata() {
   const settings = await fetchSettings();
   const clinicName = settings?.clinic_name || 'SkinGlow Clinic';
   const tagline = settings?.clinic_tagline || 'Premier Dermatology & Aesthetic Medicine';
+  const description = settings?.about_text || `Experience physician-led clinical dermatology, bespoke aesthetic enhancements, and advanced laser treatments at ${clinicName}.`;
+
   return {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://skinglowclinic.com'),
     title: `${clinicName} | ${tagline}`,
-    description: settings?.about_text || `Experience physician-led clinical dermatology, bespoke aesthetic enhancements, and advanced laser treatments at ${clinicName}.`,
-    keywords: ['skincare', 'dermatology clinic', 'aesthetic medicine', 'laser clinic', 'anti-aging', clinicName],
+    description,
+    keywords: [
+      'skin care clinic',
+      'Himmatnagar',
+      'Gujarat',
+      'dermatologist',
+      'skin doctor',
+      'skin specialist',
+      clinicName,
+      'best skin clinic Himmatnagar',
+      'dermatology Himmatnagar',
+      'skin treatment Gujarat',
+      'Sabarkantha district',
+      'aesthetic medicine',
+      'laser clinic',
+      'anti-aging',
+    ],
     authors: [{ name: clinicName }],
-    metadataBase: new URL('http://localhost:3000'),
+    alternates: {
+      canonical: '/',
+      languages: {
+        'en-IN': '/',
+      },
+    },
     icons: {
       icon: [
         { url: '/favicon.ico' },
@@ -40,7 +64,9 @@ export async function generateMetadata() {
     },
     openGraph: {
       title: `${clinicName} | ${tagline}`,
-      description: settings?.about_text || `Physician-led clinical dermatology, bespoke aesthetic enhancements, and advanced laser treatments at ${clinicName}.`,
+      description,
+      url: '/',
+      siteName: clinicName,
       type: 'website',
       locale: 'en_IN',
       images: [
@@ -48,9 +74,24 @@ export async function generateMetadata() {
           url: '/Skin%20Glow%20Logo.jpg',
           width: 1200,
           height: 1200,
-          alt: clinicName,
+          alt: `${clinicName} - Himmatnagar`,
         },
       ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${clinicName} — Best Skin Care Clinic in Himmatnagar, Gujarat`,
+      description,
+      images: ['/Skin%20Glow%20Logo.jpg'],
+    },
+    verification: {
+      google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || 'YOUR_VERIFICATION_CODE',
+    },
+    other: {
+      'geo.region': 'IN-GJ',
+      'geo.placename': 'Himmatnagar',
+      'geo.position': '23.5969;72.6813',
+      'ICBM': '23.5969, 72.6813',
     },
   };
 }
@@ -59,6 +100,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
       <body className="antialiased min-h-screen flex flex-col">
+        <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
         <ConditionalPublicLayout>
           {children}
         </ConditionalPublicLayout>

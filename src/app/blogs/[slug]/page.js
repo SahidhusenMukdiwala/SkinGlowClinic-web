@@ -15,6 +15,8 @@ import {
   BookOpen,
 } from 'lucide-react';
 import { fetchBlogBySlug, fetchSettings } from '@/lib/api';
+import JsonLd from '@/components/seo/JsonLd';
+import { getBlogPostingSchema, getBreadcrumbSchema } from '@/lib/seo/schemas';
 
 export const revalidate = 60;
 
@@ -23,8 +25,8 @@ export async function generateMetadata({ params }) {
     fetchBlogBySlug(params.slug),
     fetchSettings(),
   ]);
-  const clinicName = settings?.clinic_name || 'SkinGlow Clinic';
-  const doctorName = settings?.doctor_name || 'Lead Specialist';
+  const clinicName = settings?.clinic_name || 'Skin Glow Clinic';
+  const doctorName = settings?.doctor_name || 'Dr. Aisha Sharma';
 
   if (!data || !data.blog) {
     return {
@@ -33,13 +35,48 @@ export async function generateMetadata({ params }) {
   }
 
   const { blog } = data;
+  const title = `${blog.title} | ${clinicName}`;
+  const description = blog.excerpt || blog.content?.replace(/<[^>]+>/g, '').slice(0, 160) || `Read "${blog.title}" by ${doctorName} at ${clinicName}, Himmatnagar.`;
+  const image = blog.cover_image || '/Skin%20Glow%20Logo.jpg';
+
   return {
-    title: `${blog.title} | ${clinicName}`,
-    description: `Read "${blog.title}" by ${doctorName} at ${clinicName}. Clinical insights, evidence-based dermatology, and aesthetic recommendations.`,
+    title,
+    description,
+    keywords: [
+      blog.title,
+      blog.category || 'Skincare',
+      'Himmatnagar skincare',
+      'dermatology blog Gujarat',
+      doctorName,
+      clinicName,
+    ],
+    alternates: {
+      canonical: `/blogs/${blog.slug}`,
+    },
     openGraph: {
-      title: `${blog.title} | ${clinicName}`,
-      description: `Read "${blog.title}" by ${doctorName} at ${clinicName}.`,
-      images: [blog.cover_image],
+      title,
+      description,
+      url: `/blogs/${blog.slug}`,
+      siteName: clinicName,
+      locale: 'en_IN',
+      type: 'article',
+      publishedTime: blog.createdAt,
+      modifiedTime: blog.updatedAt || blog.createdAt,
+      authors: [blog.author || doctorName],
+      images: [
+        {
+          url: image,
+          width: 1200,
+          height: 630,
+          alt: blog.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [image],
     },
   };
 }
@@ -69,8 +106,16 @@ export default async function BlogDetailPage({ params }) {
     }
   };
 
+  const blogPostingSchema = getBlogPostingSchema(blog);
+  const breadcrumbSchema = getBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Blogs & Insights', url: '/blogs' },
+    { name: blog.title, url: `/blogs/${blog.slug}` },
+  ]);
+
   return (
     <div className="min-h-screen bg-clinic-bg pb-24">
+      <JsonLd data={[blogPostingSchema, breadcrumbSchema]} />
       {/* Breadcrumb Navigation */}
       <div className="bg-clinic-bg-alt/50 border-b border-clinic-border-subtle py-3.5 text-xs sm:text-sm text-clinic-muted">
         <div className="container max-w-4xl mx-auto px-4 flex items-center gap-2 overflow-x-auto whitespace-nowrap">
@@ -110,7 +155,7 @@ export default async function BlogDetailPage({ params }) {
               <div className="w-12 h-12 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center text-primary font-bold text-base shadow-xs overflow-hidden">
                 {settings?.doctor_image ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={settings.doctor_image} alt={settings.doctor_name || 'Doctor'} className="w-full h-full object-cover" />
+                  <img src={settings.doctor_image} alt={`${settings?.doctor_name || 'Dr. Aisha Sharma'} — Dermatologist at Skin Glow Clinic Himmatnagar`} className="w-full h-full object-cover" />
                 ) : (
                   (settings?.doctor_name || 'Dr').split(' ').map(n => n[0]).slice(0, 2).join('')
                 )}
@@ -142,7 +187,7 @@ export default async function BlogDetailPage({ params }) {
           <div className="relative h-72 sm:h-[420px] w-full rounded-3xl overflow-hidden shadow-md border border-clinic-border-subtle mb-12">
             <Image
               src={blog.cover_image}
-              alt={blog.title}
+              alt={`${blog.title} — Clinical article by Skin Glow Clinic Himmatnagar`}
               fill
               className="object-cover"
               priority
@@ -176,7 +221,7 @@ export default async function BlogDetailPage({ params }) {
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent to-accent-soft text-primary font-bold text-xl flex items-center justify-center shrink-0 shadow-gold overflow-hidden">
             {settings?.doctor_image ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={settings.doctor_image} alt={settings.doctor_name || 'Doctor'} className="w-full h-full object-cover" />
+              <img src={settings.doctor_image} alt={`${settings?.doctor_name || 'Dr. Aisha Sharma'} — Dermatologist at Skin Glow Clinic Himmatnagar`} className="w-full h-full object-cover" />
             ) : (
               (settings?.doctor_name || 'Dr').split(' ').map(n => n[0]).slice(0, 2).join('')
             )}
@@ -227,7 +272,7 @@ export default async function BlogDetailPage({ params }) {
                   <div className="relative h-44 w-full bg-slate-100 overflow-hidden">
                     <Image
                       src={item.cover_image || 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80'}
-                      alt={item.title}
+                      alt={`${item.title} — Skin Glow Clinic Himmatnagar`}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />

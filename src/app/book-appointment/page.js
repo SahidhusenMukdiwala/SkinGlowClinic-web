@@ -2,6 +2,8 @@ import React, { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import { Sparkles, ShieldCheck, Clock, Award } from 'lucide-react';
 import { fetchTreatments, fetchSettings, fetchCategoriesApi } from '@/lib/api';
+import JsonLd from '@/components/seo/JsonLd';
+import { getBreadcrumbSchema } from '@/lib/seo/schemas';
 
 const BookingWizard = dynamic(() => import('@/components/booking/BookingWizard'), {
   ssr: false,
@@ -27,11 +29,47 @@ const BookingWizard = dynamic(() => import('@/components/booking/BookingWizard')
 
 export async function generateMetadata() {
   const settings = await fetchSettings();
-  const clinicName = settings?.clinic_name || 'SkinGlow Clinic';
-  const doctorName = settings?.doctor_name || 'our doctor';
+  const clinicName = settings?.clinic_name || 'Skin Glow Clinic';
+  const doctorName = settings?.doctor_name || 'Dr. Aisha Sharma';
+  const title = `Book Skin Doctor Appointment in Himmatnagar | ${clinicName}`;
+  const description = `Book an online consultation with ${doctorName} at ${clinicName}, Himmatnagar. Specialized clinical dermatology, acne treatments, and laser therapies.`;
+
   return {
-    title: `Book an Appointment | ${clinicName}`,
-    description: `Schedule a personalized medical dermatology or aesthetic consultation with ${doctorName} at ${clinicName}.`,
+    title,
+    description,
+    keywords: [
+      'book skin doctor appointment Himmatnagar',
+      'online dermatologist appointment Gujarat',
+      'book acne treatment Himmatnagar',
+      'dermatology appointment booking',
+      doctorName,
+      clinicName,
+    ],
+    alternates: {
+      canonical: '/book-appointment',
+    },
+    openGraph: {
+      title,
+      description,
+      url: '/book-appointment',
+      siteName: clinicName,
+      locale: 'en_IN',
+      type: 'website',
+      images: [
+        {
+          url: '/Skin%20Glow%20Logo.jpg',
+          width: 1200,
+          height: 630,
+          alt: `Book Appointment at ${clinicName} — Himmatnagar`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['/Skin%20Glow%20Logo.jpg'],
+    },
   };
 }
 
@@ -44,9 +82,14 @@ export default async function BookAppointmentPage() {
     fetchCategoriesApi(),
   ]);
 
+  const breadcrumbSchema = getBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Book Appointment', url: '/book-appointment' },
+  ]);
 
   return (
     <div className="min-h-screen bg-clinic-bg pb-20">
+      <JsonLd data={breadcrumbSchema} />
       {/* Header Banner */}
       <header className="py-14 text-center bg-gradient-to-b from-primary/5 via-clinic-bg to-clinic-bg border-b border-clinic-border-subtle mb-10">
         <div className="container">
@@ -56,7 +99,10 @@ export default async function BookAppointmentPage() {
           </div>
 
           <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-primary font-bold mb-3">
-            Schedule Your Private Consultation
+            Book Your Skin Care Appointment <br className="hidden sm:inline" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent via-accent-soft to-accent-hover">
+              in Himmatnagar
+            </span>
           </h1>
           <p className="text-sm sm:text-base text-clinic-muted max-w-xl mx-auto leading-relaxed">
             Experience bespoke aesthetic precision and clinical dermatology designed specifically for your skin and hair profile.

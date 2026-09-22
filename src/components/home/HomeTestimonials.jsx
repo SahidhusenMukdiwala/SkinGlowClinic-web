@@ -136,7 +136,7 @@ export default function HomeTestimonials({ testimonials = [] }) {
                 <div className="flex items-center gap-3.5 pt-4 border-t border-clinic-border-subtle mt-auto">
                   <Image
                     src={item.patient_image || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80'}
-                    alt={item.patient_name}
+                    alt={`${item.patient_name} — Verified Patient Review at Skin Glow Clinic Himmatnagar`}
                     width={48}
                     height={48}
                     className="w-12 h-12 rounded-full object-cover border-2 border-accent/30"
